@@ -69,7 +69,7 @@ import React from "react";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Offers from "./Components/Offers/Offers";
-
+import PendingPayment from "./Components/pending-payment/pending-payment";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -94,6 +94,7 @@ const router = createBrowserRouter([
       { path: "PasswordReset", element: <PasswordReset /> },
       { path: "StaffLogin", element: <StaffLogin /> },
       { path: "PaymentSuccess", element: <PaymentSuccess /> },
+      { path: "pending-payment", element: <PendingPayment /> },
       { path: "wishlist", element: <Wishlist /> },
       { path: "Account", element: <Account /> },
       { path: "unauthorized", element: <Unauthorized /> },
