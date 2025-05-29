@@ -21,7 +21,7 @@ export default function AdminEditPromoCode() {
   const [loadingCities, setLoadingCities] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [csvFile, setCsvFile] = useState(null);
-  
+
   const TestToken = localStorage.getItem('userToken');
   const ITEMS_PER_PAGE = 10;
 
@@ -30,7 +30,7 @@ export default function AdminEditPromoCode() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch promoCodes
         const promoCodesRes = await fetch('https://reedyph.com/api/v1/promocodes', {
           headers: { 'Access-Token': TestToken }
@@ -58,7 +58,7 @@ export default function AdminEditPromoCode() {
           headers: { 'Access-Token': TestToken }
         });
         const usersData = await usersRes.json();
-        const customerUsers = Array.isArray(usersData) 
+        const customerUsers = Array.isArray(usersData)
           ? usersData.filter(user => user.role === 'customer')
           : usersData.users?.filter(user => user.role === 'customer') || [];
         setUsers(customerUsers);
@@ -85,7 +85,7 @@ export default function AdminEditPromoCode() {
       return sortConfig.direction === 'ascending' ? 1 : -1;
     }
     return 0;
-  }).filter(promoCode => 
+  }).filter(promoCode =>
     promoCode.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     promoCode.id.toString().includes(searchTerm) ||
     (promoCode.name && promoCode.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -99,8 +99,8 @@ export default function AdminEditPromoCode() {
   const requestSort = (key) => {
     setSortConfig({
       key,
-      direction: sortConfig.key === key && sortConfig.direction === 'ascending' 
-        ? 'descending' 
+      direction: sortConfig.key === key && sortConfig.direction === 'ascending'
+        ? 'descending'
         : 'ascending'
     });
   };
@@ -119,7 +119,7 @@ export default function AdminEditPromoCode() {
       });
 
       if (!response.ok) throw new Error('Failed to delete promo code');
-      
+
       setPromoCodes(promoCodes.filter(promoCode => promoCode.id !== id));
       setDeleteConfirm(null);
       toast.success('Promo code deleted successfully');
@@ -180,8 +180,7 @@ export default function AdminEditPromoCode() {
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!editModal.code || !editModal.name || !editModal.value || 
-          (editModal.usageType === 'multi_use' && !editModal.budget)) {
+      if (!editModal.code || !editModal.name || !editModal.value || !editModal.budget) {
         toast.error('Please fill all required fields');
         return;
       }
@@ -238,10 +237,10 @@ export default function AdminEditPromoCode() {
 
   const toggleUserSelection = (userId) => {
     if (!userId) return;
-    
+
     setEditModal(prev => ({
       ...prev,
-      users: prev.users.includes(userId) 
+      users: prev.users.includes(userId)
         ? prev.users.filter(id => id !== userId).filter(Boolean)
         : [...prev.users.filter(Boolean), userId]
     }));
@@ -249,7 +248,7 @@ export default function AdminEditPromoCode() {
 
   const toggleCategorySelection = (categoryId) => {
     if (!categoryId) return;
-    
+
     setEditModal(prev => ({
       ...prev,
       categories: prev.categories.includes(categoryId)
@@ -260,24 +259,24 @@ export default function AdminEditPromoCode() {
 
   const toggleCitySelection = (cityId) => {
     if (!cityId) return;
-    
+
     const city = cities.find(c => c.id === cityId);
     const isAdding = !editModal.cities.includes(cityId);
 
     setEditModal(prev => {
       const currentCities = prev.cities.filter(Boolean);
       const currentZones = prev.zones.filter(Boolean);
-      
-      const newCities = isAdding 
+
+      const newCities = isAdding
         ? [...currentCities, cityId]
         : currentCities.filter(id => id !== cityId);
 
       let newZones = [...currentZones];
-      
+
       if (isAdding && city?.zones) {
         newZones = [...new Set([...currentZones, ...city.zones.map(z => z.id).filter(Boolean)])];
       } else if (!isAdding && city?.zones) {
-        newZones = currentZones.filter(zoneId => 
+        newZones = currentZones.filter(zoneId =>
           !city.zones.some(z => z.id === zoneId)
         );
       }
@@ -292,7 +291,7 @@ export default function AdminEditPromoCode() {
 
   const toggleZoneSelection = (zoneId) => {
     if (!zoneId) return;
-    
+
     setEditModal(prev => ({
       ...prev,
       zones: prev.zones.includes(zoneId)
@@ -353,7 +352,7 @@ export default function AdminEditPromoCode() {
   return (
     <div className="flex flex-col justify-center p-4 font-alexandria font-light mt-16">
       <ToastContainer position="top-right" autoClose={5000} />
-      
+
       {/* Header and Search */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
         <Link to="/AdminAddNewPromoCode" className="whitespace-nowrap bg-blue-600 w-auto text-white rounded-lg w-[12em] text-[14px] p-4 pr-8 text-center">
@@ -408,9 +407,8 @@ export default function AdminEditPromoCode() {
                   <td className="p-3">{promoCode.budget} EGP</td>
                   <td className="p-3">{promoCode.currentBudget} EGP</td>
                   <td className="p-3">
-                    <span className={`inline-block w-4 h-4 rounded-full ${
-                      new Date(promoCode.expirationDate) >= new Date() && promoCode.isActive ? 'bg-green-500' : 'bg-red-500'
-                    }`}></span>
+                    <span className={`inline-block w-4 h-4 rounded-full ${new Date(promoCode.expirationDate) >= new Date() && promoCode.isActive ? 'bg-green-500' : 'bg-red-500'
+                      }`}></span>
                   </td>
                   <td className="p-3 space-x-2">
                     <button
@@ -507,7 +505,7 @@ export default function AdminEditPromoCode() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Name*</label>
                   <input
@@ -519,7 +517,7 @@ export default function AdminEditPromoCode() {
                     required
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Usage Type*</label>
                   <select
@@ -533,7 +531,7 @@ export default function AdminEditPromoCode() {
                     <option value="multi_use">Multi Use</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Discount Type*</label>
                   <select
@@ -547,7 +545,7 @@ export default function AdminEditPromoCode() {
                     <option value="percentage">Percentage</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">Target*</label>
                   <select
@@ -561,7 +559,7 @@ export default function AdminEditPromoCode() {
                     <option value="delivery">Delivery Fee</option>
                   </select>
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium mb-1">
                     {editModal.discountType === 'percentage' ? 'Percentage Value*' : 'Fixed Value*'}
@@ -578,19 +576,18 @@ export default function AdminEditPromoCode() {
                     step={editModal.discountType === 'percentage' ? "1" : "0.01"}
                   />
                 </div>
-                
+
                 <div>
-                  <label className="block text-sm font-medium mb-1">Budget* (for multi-use)</label>
+                  <label className="block text-sm font-medium mb-1">Budget*</label>
                   <input
                     type="number"
                     name="budget"
                     value={editModal.budget}
                     onChange={handleEditChange}
                     className="w-full p-2 border rounded"
-                    required={editModal.usageType === 'multi_use'}
+                    required
                     min="0"
                     step="0.01"
-                    disabled={editModal.usageType === 'single_use'}
                   />
                 </div>
 
@@ -632,7 +629,7 @@ export default function AdminEditPromoCode() {
                     className="w-full p-2 border rounded"
                   />
                 </div>
-                
+
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -644,7 +641,7 @@ export default function AdminEditPromoCode() {
                   />
                   <label htmlFor="isActive" className="text-sm font-medium">Active</label>
                 </div>
-                
+
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -662,14 +659,14 @@ export default function AdminEditPromoCode() {
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-medium">Available for Specific Categories</label>
                     <div className="flex space-x-2">
-                      <button 
+                      <button
                         type="button"
                         onClick={selectAllCategories}
                         className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                       >
                         Select All
                       </button>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => {
                           setEditModal(prev => ({
@@ -683,7 +680,7 @@ export default function AdminEditPromoCode() {
                       </button>
                     </div>
                   </div>
-                  
+
                   <div className="border rounded p-2 max-h-40 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {categories.map(category => (
@@ -712,14 +709,14 @@ export default function AdminEditPromoCode() {
                   <div className="flex justify-between items-center mb-2">
                     <label className="block text-sm font-medium">Available for Specific Users</label>
                     <div className="flex space-x-2">
-                      <button 
+                      <button
                         type="button"
                         onClick={selectAllUsers}
                         className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                       >
                         Select All
                       </button>
-                      <button 
+                      <button
                         type="button"
                         onClick={deselectAllUsers}
                         className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
@@ -728,11 +725,11 @@ export default function AdminEditPromoCode() {
                       </button>
                     </div>
                   </div>
-                  
+
                   {/* User Dropdown Selection */}
                   <div className="mb-4">
                     <div className="flex items-center gap-2">
-                      <select 
+                      <select
                         className="flex-1 border p-2 rounded"
                         value=""
                         onChange={(e) => {
@@ -754,7 +751,7 @@ export default function AdminEditPromoCode() {
                       </select>
                     </div>
                   </div>
-                  
+
                   {/* CSV Upload */}
                   <div className="mb-4">
                     <label className="block text-sm text-gray-700 mb-1">Upload User IDs (CSV):</label>
@@ -776,7 +773,7 @@ export default function AdminEditPromoCode() {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Selected Users */}
                   <div className="border rounded-md p-4 max-h-40 overflow-y-auto">
                     <h3 className="font-medium mb-2">Selected Users ({editModal.users.length})</h3>
@@ -824,7 +821,7 @@ export default function AdminEditPromoCode() {
                             />
                             <span className="text-sm">{city.name}</span>
                           </label>
-                          
+
                           {editModal.cities.includes(city.id) && city.zones?.length > 0 && (
                             <div className="ml-6 mt-2 pl-4 border-l-2 border-gray-200">
                               <label className="block text-xs font-medium text-gray-600 mb-1">Zones:</label>
@@ -855,7 +852,7 @@ export default function AdminEditPromoCode() {
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex justify-end space-x-3">
                 <button
                   type="button"
