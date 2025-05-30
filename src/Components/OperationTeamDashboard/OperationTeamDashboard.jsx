@@ -324,6 +324,12 @@ const OperationTeamDashboard = () => {
                   <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
                 )}
               </th>
+              <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('deliveryFees')}>
+                Delivery Fees {sortConfig.key === 'deliveryFees' && (
+                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                )}
+              </th>
               <th className="p-2 text-left">Payment Method</th>
               <th className="p-2 text-left">Payment Status</th>
               <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
@@ -356,6 +362,7 @@ const OperationTeamDashboard = () => {
                       {itemsSummary}
                     </td>
                     <td className="p-2">{order.totalAmount?.toFixed(2) || '0.00'}EGP</td>
+                    <td className="p-2">{order.deliveryFees?.toFixed(2) || '0.00'}EGP</td>
                     <td className="p-2">{order.paymentMethod || 'N/A'}</td>
                     <td className="p-2">
                       <span className={`px-1 py-0.5 rounded-full text-xs ${order.paymentStatus === 'paid' ? 'bg-red-100 text-red-800' : 'bg-red-100 text-red-800'}`}>
@@ -398,7 +405,7 @@ const OperationTeamDashboard = () => {
               })
             ) : (
               <tr>
-                <td colSpan="10" className="p-2 text-center text-gray-500">
+                <td colSpan="11" className="p-2 text-center text-gray-500">
                   No orders found
                 </td>
               </tr>
@@ -476,10 +483,3 @@ const OperationTeamDashboard = () => {
 };
 
 export default OperationTeamDashboard;
-const addUniqueOrder = (newOrder) => {
-  setOrders(prev => {
-    const uniqueOrders = new Map(prev.map(order => [order.id, order]));
-    uniqueOrders.set(newOrder.id, newOrder);
-    return Array.from(uniqueOrders.values());
-  });
-};
