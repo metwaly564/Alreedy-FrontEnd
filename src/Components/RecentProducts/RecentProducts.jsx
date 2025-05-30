@@ -492,7 +492,7 @@ export default function RecentProducts() {
                     {orderedBanners.map((banner) => (
                       <div
                         key={banner.id}
-                        className="px-[4.5px] overflow-y-hidden"
+                        className="px-[2px] overflow-y-hidden"
                       >
                         <div className="transition-transform duration-300 hover:scale-105 overflow-hidden rounded-xl shadow-md w-[99%] mx-auto overflow-y-hidden">
                           <Link
@@ -586,7 +586,7 @@ export default function RecentProducts() {
                                       >
                                         <img
                                           src={product.Images?.[0]?.url || FALLBACK_IMAGE}
-                                          className="w-full h-40 sm:h-24 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                          className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
                                           alt={product.nameAr || "Product"}
                                           loading="lazy"
                                           decoding="async"
@@ -725,16 +725,12 @@ export default function RecentProducts() {
                                           }}
                                         >
                                           <img
-                                            src={
-                                              product.Images?.[0]?.url || FALLBACK_IMAGE
-                                            }
-                                            className="w-full h-40 sm:h-24 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                            src={product.Images?.[0]?.url || FALLBACK_IMAGE}
+                                            className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
                                             alt={product.nameAr || "Product"}
                                             loading="lazy"
                                             decoding="async"
-                                            onError={(e) =>
-                                              (e.target.src = FALLBACK_IMAGE)
-                                            }
+                                            onError={(e) => (e.target.src = FALLBACK_IMAGE)}
                                           />
                                         </a>
                                         {/* Icons */}
@@ -876,16 +872,12 @@ export default function RecentProducts() {
                                       }}
                                     >
                                       <img
-                                        src={
-                                          product.Images?.[0]?.url || FALLBACK_IMAGE
-                                        }
-                                        className="w-full h-40 sm:h-24 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                        src={product.Images?.[0]?.url || FALLBACK_IMAGE}
+                                        className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
                                         alt={product.nameAr || "Product"}
                                         loading="lazy"
                                         decoding="async"
-                                        onError={(e) =>
-                                          (e.target.src = FALLBACK_IMAGE)
-                                        }
+                                        onError={(e) => (e.target.src = FALLBACK_IMAGE)}
                                       />
                                     </a>
                                     {/* Icons */}
