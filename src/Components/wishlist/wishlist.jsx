@@ -23,24 +23,24 @@ export default function Wishlist() {
     try {
       setIsLoading(true);
       const userToken = localStorage.getItem("userToken");
-
+  
       if (!userToken) {
         setError("Please login to view your wishlist");
         setIsLoading(false);
         return;
       }
-
+  
       const config = {
         headers: {
           "Access-Token": userToken,
         },
       };
-
+  
       const response = await axios.get("https://reedyph.com/api/v1/wishlists/wishlist", config);
-      
-      // Filter out deleted products
-      const filteredItems = response.data.filter(item => item.isDeleted);
-      
+  
+      // ✅ Fix: Filter in only active and not deleted items
+      const filteredItems = response.data.filter(item => !item.isDeleted && item.isActive);
+  
       setWishlistItems(filteredItems);
       setError(null);
     } catch (err) {
@@ -51,6 +51,7 @@ export default function Wishlist() {
       setIsLoading(false);
     }
   };
+  
 
   const deleteFromWishlist = async (skuId) => {
     try {
