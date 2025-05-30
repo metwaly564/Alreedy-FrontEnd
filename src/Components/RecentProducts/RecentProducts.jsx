@@ -457,26 +457,18 @@ export default function RecentProducts() {
               // Get remaining banners
               const remainingBanners = fixedBanners.slice(usedBannersCount);
 
-              // If we have 3 or more remaining, show first 3 in slider
-              if (remainingBanners.length >= 3) {
-                const sliderBanners = remainingBanners.slice(0, 3);
-                const centeredBanners = remainingBanners.slice(3);
-                
-                // For Arabic, reverse the row order
-                const orderedSliderBanners = isArabic ? [...sliderBanners].reverse() : sliderBanners;
-                const orderedCenteredBanners = isArabic ? [...centeredBanners].reverse() : centeredBanners;
-                
-                return {
-                  sliderBanners: orderedSliderBanners,
-                  centeredBanners: orderedCenteredBanners
-                };
+              // Group remaining banners into sets of 3
+              const bannerGroups = [];
+              for (let i = 0; i < remainingBanners.length; i += 3) {
+                const group = remainingBanners.slice(i, i + 3);
+                if (group.length > 0) {
+                  // For Arabic, reverse the row order
+                  const orderedGroup = isArabic ? [...group].reverse() : group;
+                  bannerGroups.push(orderedGroup);
+                }
               }
 
-              // If less than 3, show all centered
-              return {
-                sliderBanners: [],
-                centeredBanners: isArabic ? [...remainingBanners].reverse() : remainingBanners
-              };
+              return bannerGroups;
             };
 
             // Function to render banner slider
@@ -1002,43 +994,15 @@ export default function RecentProducts() {
 
                 {/* Show remaining banners after all categories */}
                 {(() => {
-                  const { sliderBanners, centeredBanners } = getRemainingBanners();
-
+                  const bannerGroups = getRemainingBanners();
+                  
                   return (
                     <>
-                      {/* Show remaining banners in slider if any */}
-                      {sliderBanners.length > 0 && (
-                        <div className="py-5 overflow-hidden">
-                          {renderBannerSlider(sliderBanners)}
+                      {bannerGroups.map((group, index) => (
+                        <div key={index} className="py-5 overflow-hidden">
+                          {renderBannerSlider(group)}
                         </div>
-                      )}
-
-                      {/* Show remaining banners centered if any */}
-                      {centeredBanners.length > 0 && (
-                        <div className="hidden sm:flex justify-center gap-[14px] overflow-hidden mx-2">
-                          {centeredBanners.map((banner) => (
-                            <div
-                              key={banner.id}
-                              className="w-[40%] transition-transform duration-300 hover:scale-105 overflow-hidden rounded-xl shadow-md"
-                              style={{ maxWidth: 520 }}
-                            >
-                              <Link
-                                to={banner.linkUrl || "#"}
-                                target={banner.linkUrl?.startsWith("https") ? "_blank" : "_self"}
-                                rel="noopener noreferrer"
-                                className="block h-auto w-full overflow-hidden"
-                              >
-                                <img
-                                  src={banner.imageUrl}
-                                  alt={banner.title}
-                                  className="w-full h-full object-cover object-center"
-                                  loading="lazy"
-                                />
-                              </Link>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                      ))}
                     </>
                   );
                 })()}
