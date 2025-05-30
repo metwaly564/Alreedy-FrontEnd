@@ -911,12 +911,14 @@ export default function Search() {
                   {selectedProduct.tags && selectedProduct.tags.length > 0 && (
                     <div className={`mb-4 flex flex-wrap gap-1 ${isArabic ? "justify-end" : "justify-start"}`}>
                       {selectedProduct.tags.map(tagObj => (
-                        <span
-                          key={tagObj.tag.id}
-                          className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded"
-                        >
-                          {isArabic ? tagObj.tag.nameAr : tagObj.tag.nameEn}
-                        </span>
+                        tagObj && tagObj.tag && (
+                          <span
+                            key={tagObj.tag.id || Math.random()}
+                            className="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded"
+                          >
+                            {isArabic ? tagObj.tag.nameAr : tagObj.tag.nameEn}
+                          </span>
+                        )
                       ))}
                     </div>
                   )}
