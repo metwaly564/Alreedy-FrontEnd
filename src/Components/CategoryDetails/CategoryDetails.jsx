@@ -507,7 +507,7 @@ export default function CategoryDetails() {
                     className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
                       }`}
                   >
-                    {isArabic ? 'السعر: من الأقل للأعلى' : 'Price: low to high'}
+                    {isArabic ? 'السعر : من الأعلى للأقل' : 'Decending'}
                   </button>
                   <button
                     onClick={() => {
@@ -517,7 +517,7 @@ export default function CategoryDetails() {
                     className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
                       }`}
                   >
-                    {isArabic ? 'السعر: من الأعلى للأقل' : 'Price: high to low'}
+                    {isArabic ? 'السعر : من الأقل للأعلى' : 'Accending'}
                   </button>
                   <button
                     onClick={() => {
