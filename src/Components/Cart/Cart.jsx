@@ -1158,8 +1158,8 @@ const Cart = () => {
     // If we have less than 4 products, don't use the slider
     if (availableProducts.length <= 4) {
       return (
-        <div className="mt-8">
-          <h2 className="text-lg font-bold text-right mb-4">
+        <div className={`mt-8`}>
+          <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
             {isArabic ? "منتجات قد تعجبك" : "You May also Like"}
           </h2>
           
@@ -1264,7 +1264,7 @@ const Cart = () => {
     // Otherwise, use the slider
     return (
       <div className="mt-8">
-        <h2 className="text-lg font-bold text-right mb-4">
+        <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
           {isArabic ? "منتجات قد تعجبك" : "You May also Like"}
         </h2>
         
