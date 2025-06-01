@@ -15,7 +15,7 @@ export default function Search() {
   const { CartProductsIds, setCartProductsIds, setnumItems, fetchCartCount, setCartCount, fetchWishlistCount, triggerRefresh } = useContext(CartContext);
   const [showFilters, setShowFilters] = useState(false);
   const [showSort, setShowSort] = useState(false);
-  const [currentSort, setCurrentSort] = useState("newest");
+  const [currentSort, setCurrentSort] = useState("newest"); // Initial sort option
   const [priceFilterApplied, setPriceFilterApplied] = useState(false);
   const [tempMin, setTempMin] = useState(0);
   const [tempMax, setTempMax] = useState(5000);
@@ -33,7 +33,10 @@ export default function Search() {
   const sortDropdownRef = useRef(null);
   const categoryDropdownRef = useRef(null);
   const tagDropdownRef = useRef(null);
+
+  // Fallback image for products without images
   const FALLBACK_IMAGE = "https://via.placeholder.com/150?text=No+Image";
+
 
   useEffect(() => {
     setminSearch(0);
@@ -66,9 +69,12 @@ export default function Search() {
     };
     fetchCategoriesAndTags();
   }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Fetch products and apply filters/sort locally
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
@@ -78,19 +84,33 @@ export default function Search() {
         url += `&categoryId=${selectedCategory}`;
       }
 
-      if (selectedTag) {
-        url += `&tagId=${selectedTag}`;
-      }
+      // Important: Remove price filtering from the API call here if you want to handle it locally
+      // if (priceFilterApplied) {
+      //   url += `&minPrice=${minSearch}&maxPrice=${maxSearch}`;
+      // }
 
-      if (priceFilterApplied) {
-        url += `&minPrice=${minSearch}&maxPrice=${maxSearch}`;
-      }
-
-      url += `&sort=${currentSort}`;
+      // Do NOT send sorting parameters to the API if you intend to sort locally.
+      // let sortParam = currentSort;
+      // if (currentSort === "price_asc") {
+      //   sortParam = "price_asc";
+      // } else if (currentSort === "price_desc") {
+      //   sortParam = "price_desc";
+      // } else if (currentSort === "name_asc") {
+      //   sortParam = "name_asc";
+      // } else if (currentSort === "name_desc") {
+      //   sortParam = "name_desc";
+      // } else if (currentSort === "newest") {
+      //   sortParam = "createdAt_desc";
+      // } else if (currentSort === "oldest") {
+      //   sortParam = "createdAt_asc";
+      // }
+      // url += `&sort=${sortParam}`;
 
       const response = await axios.get(url);
+
+      // Directly set search results and let the useEffect handle filtering and sorting
       setSearchResult(response.data.products);
-      setFilteredProducts(response.data.products);
+      setFilteredProducts(response.data.products); // Initialize with all products
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error(isArabic ? "فشل تحميل المنتجات" : "Failed to load products", {
@@ -101,16 +121,72 @@ export default function Search() {
     }
   };
 
+  // Sorting function that matches the working component
+  const applySorting = (products, sortOption) => {
+    if (!products) return [];
+
+    const sortedProducts = [...products];
+
+    // First apply the default sorting by rank and ID (if present and needed)
+    // This is the default sorting present in CategoryDetails
+    sortedProducts.sort((a, b) => {
+      if ((a.itemRank || 0) !== (b.itemRank || 0)) {
+        return (a.itemRank || 0) - (b.itemRank || 0);
+      }
+      return a.id - b.id;
+    });
+
+    // Then apply any additional sorting if specified
+    switch (sortOption) {
+      case "newest":
+        return sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      case "oldest":
+        return sortedProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      case "price_asc": // Low to High
+        return sortedProducts.sort((a, b) => (a.priceAfter || 0) - (b.priceAfter || 0));
+      case "price_desc": // High to Low
+        return sortedProducts.sort((a, b) => (b.priceAfter || 0) - (a.priceAfter || 0));
+      case "name_asc":
+        return sortedProducts.sort((a, b) => (a.nameEn || a.nameAr || "").localeCompare(b.nameEn || b.nameAr || ""));
+      case "name_desc":
+        return sortedProducts.sort((a, b) => (b.nameEn || b.nameAr || "").localeCompare(a.nameEn || a.nameAr || ""));
+      default:
+        return sortedProducts;
+    }
+  };
+
+  // Update filtered products when products, sorting, or filters change
+  useEffect(() => {
+    if (SearchResult) {
+      let filtered = [...SearchResult];
+
+      // Apply price filtering locally
+      filtered = filtered.filter(product =>
+        !priceFilterApplied || (product.priceAfter >= minSearch && product.priceAfter <= maxSearch)
+      );
+
+      // Apply tag filtering locally
+      filtered = filtered.filter(product =>
+        !selectedTag || (product.tags && product.tags.some(tagObj => tagObj.tag.id === selectedTag))
+      );
+
+      // Apply sorting locally
+      filtered = applySorting(filtered, currentSort);
+
+      setFilteredProducts(filtered);
+    }
+  }, [SearchResult, currentSort, minSearch, maxSearch, priceFilterApplied, selectedTag]);
+
   const handleSort = (sortOption) => {
     setCurrentSort(sortOption);
-    fetchProducts();
+    // No need to call fetchProducts here, useEffect will handle re-filtering and sorting
   };
 
   const applyPriceFilter = () => {
     setminSearch(tempMin);
     setmaxSearch(tempMax);
     setPriceFilterApplied(true);
-    fetchProducts();
+    // No need to call fetchProducts here, useEffect will handle re-filtering and sorting
   };
 
   const resetAllFilters = () => {
@@ -122,24 +198,24 @@ export default function Search() {
     setSelectedCategory(null);
     setSelectedTag(null);
     setCurrentSort("newest");
-    fetchProducts();
+    fetchProducts(); // Re-fetch products to ensure fresh data and reapply default sorting
   };
 
   const handleCategoryFilter = (categoryId) => {
     setSelectedCategory(categoryId === selectedCategory ? null : categoryId);
-    fetchProducts();
+    fetchProducts(); // Re-fetch products when category changes
   };
 
   const handleTagFilter = (tagId) => {
     setSelectedTag(tagId === selectedTag ? null : tagId);
-    fetchProducts();
+    // No need to call fetchProducts here, useEffect will handle re-filtering and sorting
   };
 
   useEffect(() => {
     if (searchkey) {
       fetchProducts();
     }
-  }, [searchkey]);
+  }, [searchkey]); // Re-fetch when searchkey changes
 
   async function trackProductView(skuId) {
     try {
@@ -391,7 +467,7 @@ export default function Search() {
 
         {/* Mobile Overlays */}
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:z-20 ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           onClick={() => {
             setShowFilters(false);
@@ -478,6 +554,78 @@ export default function Search() {
                       {isArabic ? tag.nameAr : tag.nameEn}
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Sort Options */}
+              <div className="mb-4" ref={sortDropdownRef}>
+                <button
+                  className={`w-full flex ${isArabic ? 'flex-row-reverse' : 'flex-row'} justify-between items-center px-2 py-2 bg-gray-100 rounded transition-colors duration-500 hover:bg-gray-200 font-medium`}
+                  onClick={() => setShowSort(!showSort)}
+                >
+                  <span className={`flex-1 ${isArabic ? "text-right" : "text-left"}`}>{isArabic ? 'الترتيب' : 'Sort'}</span>
+                  <svg className={`w-4 h-4 transition-transform duration-500 ${showSort ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div
+                  className={`bg-white border rounded shadow mt-1 transition-all duration-500 ease-in-out overflow-hidden ${showSort ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'}`}
+                  style={{ minWidth: '100%' }}
+                >
+                  <button
+                    onClick={() => {
+                      handleSort("newest");
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "newest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'الأحدث أولاً' : 'Newest first'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("oldest");
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "oldest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'الأقدم أولاً' : 'Oldest first'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("price_asc"); // Changed from price_desc to price_asc
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'السعر: من الأقل للأعلى' : 'Price: low to high'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("price_desc"); // Changed from price_asc to price_desc
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'السعر: من الأعلى للأقل' : 'Price: high to low'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("name_asc");
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'الاسم: من أ إلى ي' : 'Name: A to Z'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("name_desc");
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'الاسم: من ي إلى أ' : 'Name: Z to A'}
+                  </button>
                 </div>
               </div>
 
@@ -619,20 +767,20 @@ export default function Search() {
                 </button>
                 <button
                   onClick={() => {
-                    handleSort("price_desc");
+                    handleSort("price_asc"); // Corrected to price_asc for "low to high"
                     setShowSort(false);
                   }}
-                  className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                  className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
                     }`}
                 >
                   {isArabic ? 'السعر: من الأقل للأعلى' : 'Price: low to high'}
                 </button>
                 <button
                   onClick={() => {
-                    handleSort("price_asc");
+                    handleSort("price_desc"); // Corrected to price_desc for "high to low"
                     setShowSort(false);
                   }}
-                  className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                  className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
                     }`}
                 >
                   {isArabic ? 'السعر: من الأعلى للأقل' : 'Price: high to low'}
@@ -672,14 +820,7 @@ export default function Search() {
                 {filteredProducts?.length > 0 ? (
                   filteredProducts
                     .filter(product => product.isActive && !product.isDeleted)
-                    .sort((a, b) => {
-                      // First sort by rank
-                      if ((a.itemRank || 0) !== (b.itemRank || 0)) {
-                        return (a.itemRank || 0) - (b.itemRank || 0);
-                      }
-                      // If ranks are equal, sort by ID to maintain consistent order
-                      return a.id - b.id;
-                    })
+                    // The primary sorting by rank and ID is handled inside applySorting now
                     .map((product) => (
                       <div
                         key={product.skuId}
@@ -805,7 +946,7 @@ export default function Search() {
                     <p className="text-gray-700 mb-3 font-medium text-xs sm:text-sm md:text-base">
                       {isArabic ? "لم يتم العثور على منتجات تطابق معايير البحث الخاصة بك" : "No products were found matching your search criteria"}
                     </p>
-                    {(priceFilterApplied || selectedTag) && (
+                    {(priceFilterApplied || selectedTag || selectedCategory) && (
                       <button
                         onClick={resetAllFilters}
                         className="mt-3 bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition font-medium text-xs sm:text-sm md:text-base"
