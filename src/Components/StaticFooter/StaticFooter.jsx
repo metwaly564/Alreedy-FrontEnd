@@ -48,11 +48,7 @@ export default function StaticFooter() {
           <details className={`group cursor-pointer ${isArabic?"text-right":"text-left"} transition-all duration-300 `}>
             <summary className={`flex ${isArabic ? "" : "flex-row-reverse"} items-center justify-between font-medium text-right transition-all duration-300`}>
               <span className="text-lg transition-transform duration-300 group-open:rotate-45">+</span>
-              <span className="text-lg transition-all duration-300"> 
-                <Link to="ContactUs">
-                {isArabic ? 'تواصل معنا' : 'Get In Touch'}
-                </Link>
-                </span>
+              <span className="text-lg transition-all duration-300">{isArabic ? 'تواصل معنا' : 'Get In Touch'}</span>
             </summary>
             <div className={`mt-3 text-right flex flex-col hover:text-red-400 ${isArabic?"items-end":"items-start"} `}>
               <Link to="/branches" className="mb-2 hover:text-red-400 text-base font-light">{isArabic ? 'فروعنا' : 'Branches'}</Link>
@@ -159,9 +155,7 @@ export default function StaticFooter() {
         <div className={`flex-1 ${isArabic?"text-right":""} `}>
           <h3 className="text-lg font-bold mb-1 ">
             <span className="inline-block border-b-2 border-blue-900 ">
-              <Link to="ContactUs">
               {isArabic ? 'تواصل معنا' : 'Get In Touch'}
-              </Link>
             </span>
           </h3>
           <Link to="/branches" className={`mb-2 ${isArabic?"text-right":""} hover:text-red-400  text-base font-light transition-all duration-300`}>{isArabic ? 'فروعنا' : 'Branches'}</Link>
