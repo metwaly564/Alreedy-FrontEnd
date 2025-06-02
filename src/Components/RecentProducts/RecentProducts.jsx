@@ -388,7 +388,9 @@ export default function RecentProducts() {
     <>
       <div className="py-8">
         {isLoading ? (
-          <div className="text-center">Loading data...</div>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+          </div>
         ) : categories.length === 0 ? (
           <div className="text-center">No categories available</div>
         ) : (
