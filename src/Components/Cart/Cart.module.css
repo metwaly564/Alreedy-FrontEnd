@@ -3,68 +3,6 @@
 .slideItem {
   position: relative;
   overflow: hidden;
-  padding: 0 8px;
-}
-
-/* Add styles for the slider container */
-:global(.slick-slider) {
-  width: 100%;
-  margin: 0;
-}
-
-:global(.slick-list) {
-  margin: 0;
-  padding: 0;
-}
-
-:global(.slick-track) {
-  display: flex;
-}
-
-:global(.slick-slide) {
-  height: auto;
-}
-
-:global(.slick-slide > div) {
-  height: 100%;
-}
-
-/* Desktop slider styles */
-@media (min-width: 768px) {
-  :global(.slick-slider) {
-    padding: 0 40px;
-    position: relative;
-  }
-
-  :global(.slick-prev),
-  :global(.slick-next) {
-    width: 40px;
-    height: 40px;
-    z-index: 1;
-    display: block !important;
-  }
-
-  :global(.slick-prev) {
-    left: 0;
-  }
-
-  :global(.slick-next) {
-    right: 0;
-  }
-
-  :global(.slick-prev:before),
-  :global(.slick-next:before) {
-    font-size: 40px;
-    color: black;
-  }
-}
-
-/* Hide arrows on mobile */
-@media (max-width: 767px) {
-  :global(.slick-prev),
-  :global(.slick-next) {
-    display: none !important;
-  }
 }
 
 .addToCartButton {

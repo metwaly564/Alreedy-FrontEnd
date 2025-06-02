@@ -70,9 +70,6 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Offers from "./Components/Offers/Offers";
 import PendingPayment from "./Components/pending-payment/pending-payment";
-import Returns from "./Components/Returns/Returns";
-import Shipping from "./Components/Shipping/Shipping";
-import ContactUs from "./Components/ContactUs/ContactUs";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -108,9 +105,7 @@ const router = createBrowserRouter([
       { path: "branches", element: <Branches /> },
       { path: "Failed-Payment", element: <FailedPayment /> },
       { path: "Offers", element: <Offers /> },
-      { path: "Returns", element: <Returns /> },
-      { path: "Shipping", element: <Shipping /> },
-      { path: "ContactUs", element: <ContactUs /> },
+      
       // Protected routes for all authenticated users (any rule including customers)
       {
         path: "checkout",
