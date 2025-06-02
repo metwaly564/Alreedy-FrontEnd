@@ -61,12 +61,35 @@ const Cart = () => {
     }
   };
 
+  // Add custom arrow components
+  const CustomLeftArrow = ({ onClick }) => (
+    <button 
+      onClick={onClick}
+      className="hidden sm:block absolute left-2 sm:left-4 bg-black/80 p-1 sm:p-2 rounded-full text-white z-10 top-[45%]"
+    >
+      <svg xmlns="https://www.w3.org/2000/svg" className="h-4 w-4 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+  );
+
+  const CustomRightArrow = ({ onClick }) => (
+    <button 
+      onClick={onClick}
+      className="hidden sm:block absolute right-2 sm:right-4 bg-black/80 p-1 sm:p-2 rounded-full text-white z-10 top-[45%]"
+    >
+      <svg xmlns="https://www.w3.org/2000/svg" className="h-4 w-4 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  );
+
   // Slider settings for related products
   const sliderSettings = {
     dots: false,
     infinite: true,
     speed: 300,
-    slidesToShow: 4,
+    slidesToShow: 6,
     slidesToScroll: 1,
     draggable: true,
     swipeToSlide: false,
@@ -74,12 +97,23 @@ const Cart = () => {
     autoplay: false,
     arrows: true,
     centerPadding: "0px",
-    rtl: true,
+    rtl: isArabic,
+    prevArrow: <CustomLeftArrow />,
+    nextArrow: <CustomRightArrow />,
     responsive: [
+      {
+        breakpoint: 1576,
+        settings: {
+          slidesToShow: 6,
+          slidesToScroll: 1,
+          swipeToSlide: false,
+          touchThreshold: 10,
+        },
+      },
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 5,
           slidesToScroll: 1,
           swipeToSlide: false,
           touchThreshold: 10,
@@ -88,7 +122,7 @@ const Cart = () => {
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: 3,
           slidesToScroll: 1,
           swipeToSlide: false,
           touchThreshold: 10,
@@ -1379,39 +1413,42 @@ const Cart = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
         </div>
       ) : cartItems.length > 0 ? (
-        <div className="flex flex-col lg:flex-row gap-4">
-          <div className="lg:w-2/3 lg:order-2">
-            {renderCartItems()}
-            <div className="hidden lg:block">
-              {renderRelatedProducts()}
+        <div className="flex flex-col">
+          {/* Main content row with order summary and cart items */}
+          <div className="flex flex-col lg:flex-row gap-4 mb-8">
+            {/* Order Summary Column */}
+            <div className="lg:w-1/3">
+              <div className="bg-white rounded-lg shadow-sm p-4 border">
+                {userlogin ? (
+                  <>
+                    {renderOrderSummary()}
+                    {renderStepIndicator()}
+                    {renderStepContent()}
+                  </>
+                ) : (
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <h3 className="text-right text-sm font-medium mb-2">
+                      {isArabic ? "سجل الدخول لإتمام الطلب" : "Login to complete the order"}
+                    </h3>
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="w-full bg-red-600 text-white py-2 rounded text-sm font-bold hover:bg-red-700"
+                    >
+                      {isArabic ? "تسجيل الدخول" : "Login "}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-         
-          <div className="lg:w-1/3 lg:order-1">
-            <div className="bg-white rounded-lg shadow-sm p-4 border">
-              {userlogin ? (
-                <>
-                  {renderOrderSummary()}
-                  {renderStepIndicator()}
-                  {renderStepContent()}
-                </>
-              ) : (
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <h3 className="text-right text-sm font-medium mb-2">
-                    {isArabic ? "سجل الدخول لإتمام الطلب" : "Login to complete the order"}
-                  </h3>
-                  <button
-                    onClick={() => navigate("/login")}
-                    className="w-full bg-red-600 text-white py-2 rounded text-sm font-bold hover:bg-red-700"
-                  >
-                    {isArabic ? "تسجيل الدخول" : "Login "}
-                  </button>
-                </div>
-              )}
+
+            {/* Cart Items Column */}
+            <div className="lg:w-2/3">
+              {renderCartItems()}
             </div>
           </div>
 
-          <div className="lg:hidden">
+          {/* Related Products Slider - Full Width */}
+          <div className="w-full">
             {renderRelatedProducts()}
           </div>
         </div>
