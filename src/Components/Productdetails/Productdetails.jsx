@@ -302,11 +302,11 @@ export default function ProductDetails() {
             <p className="text-gray-600 font-alexandria font-light">من {product.company}</p>
             
             <div className="flex items-center space-x-reverse space-x-4">
-              <span className="text-3xl font-bold text-gray-900">{product.priceAfter} جنيه</span>
+              <span className="text-3xl font-bold text-gray-900 whitespace-nowrap">{product.priceAfter} جنيه</span>
               {product.priceBefore && product.priceBefore !== product.priceAfter && (
                 <>
-                  <span className="text-xl text-gray-500 line-through ml-4 font-alexandria font-light">{product.priceBefore} جنيه</span>
-                  <span className="text-sm bg-red-100 text-red-800 px-2 py-1 rounded ml-4 font-alexandria font-light">
+                  <span className="text-xl text-gray-500 line-through ml-4 font-alexandria font-light whitespace-nowrap">{product.priceBefore} جنيه</span>
+                  <span className="text-sm bg-red-100 text-red-800 px-2 py-1 rounded ml-4 font-alexandria font-light whitespace-nowrap">
                     خصم {Math.round(
                       ((product.priceBefore - product.priceAfter) / product.priceBefore) * 100
                     )}%
@@ -365,7 +365,7 @@ export default function ProductDetails() {
               <h3 className="font-semibold text-gray-900 mb-2">العلامات</h3>
               <div className="flex flex-wrap gap-2">
                 {product.tags?.map((tag) => (
-                  <Link to={`/TagDetails/${tag.tagId}`} key={tag.tagId}>
+                  <Link to={`/TagDetails/${tag.tagId}`} key={tag.tagId} className="overflow-hidden">
                     <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light">
                       {tag.tag.nameEn} {/* Assuming tags only have English names */}
                     </span>
