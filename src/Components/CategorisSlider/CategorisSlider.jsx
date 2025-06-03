@@ -77,7 +77,7 @@ export default function CategorisSlider() {
 
   return (
     <div className="px-5 mt-[30px] overflow-hidden">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-2 overflow-hidden">
         {(() => {
           // Group banners into rows of 3
           const rows = [];
