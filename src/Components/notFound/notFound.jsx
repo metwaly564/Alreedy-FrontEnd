@@ -49,8 +49,8 @@ export default function NotFound() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-32">
-      <div className="text-center p-8 bg-white rounded-lg shadow-md max-w-md mx-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-32 overflow-hidden">
+      <div className="text-center p-8 bg-white rounded-lg shadow-md max-w-md mx-4 overflow-hidden">
         <div className="mb-6">
           <svg
             xmlns="https://www.w3.org/2000/svg"
@@ -67,7 +67,7 @@ export default function NotFound() {
             />
           </svg>
         </div>
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">404</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4 overflow-hidden">404</h1>
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">
           Page Not Found
         </h2>

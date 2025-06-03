@@ -993,7 +993,7 @@ export default function RecentProducts() {
                   return (
                     <>
                       {bannerGroups.map((group, index) => (
-                        <div key={index} className="py-2 overflow-hidden">
+                        <div key={index} className="py-1 overflow-hidden">
                           {renderBannerSlider(group)}
                         </div>
                       ))}
