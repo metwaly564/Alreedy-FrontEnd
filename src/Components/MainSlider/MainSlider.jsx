@@ -93,8 +93,8 @@ export default function MainSlider() {
   }
 
   return (
-    <div className="w-full relative mt-[90px] sm:mt-[110px] md:mt-[130px] lg:mt-[50px]">
-      <div className="w-screen -mx-[calc((100vw-100%)/2)] group">
+    <div className="w-full relative mt-[90px] sm:mt-[110px] md:mt-[130px] lg:mt-[50px] overflow-hidden">
+      <div className="w-screen -mx-[calc((100vw-100%)/2)] group overflow-hidden">
         <Carousel
           responsive={responsive}
           infinite={true}
@@ -109,7 +109,7 @@ export default function MainSlider() {
           customRightArrow={<CustomRightArrow />}
         >
           {banners.map((banner) => (
-            <div key={banner.id} className="w-full pt-2">
+            <div key={banner.id} className="w-full pt-2 overflow-hidden">
               <div className="relative w-full pb-[35.25%] mt-8 mb-[-9px]">
                 <img 
                   src={banner.imageUrl} 
