@@ -732,14 +732,8 @@ export default function Navbar() {
               }
             >
               {isLoadingCategories ? (
-                <div
-                  className={`block ${
-                    !isArabic ? "text-left" : "text-right"
-                  } text-gray-500`}
-                >
-                  {isArabic
-                    ? "Loading categories..."
-                    : "جاري تحميل الفئات..."}
+                <div className="flex justify-center items-center h-32">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
                 </div>
               ) : (
                 <div className="space-y-6 font-semibold text-sm">

@@ -814,7 +814,7 @@ export default function Search() {
             {/* Products Grid */}
             {!isLoading && (
               <div
-                className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3 md:gap-0`}
+                className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3 md:gap-0`}
                 dir={isArabic ? "rtl" : "ltr"}
               >
                 {filteredProducts?.length > 0 ? (
@@ -824,7 +824,7 @@ export default function Search() {
                     .map((product) => (
                       <div
                         key={product.skuId}
-                        className={`${style.slideItem} group w-full`}
+                        className={`${style.slideItem} group w-full overflow-hidden`}
                       >
                         <div className="relative bg-white rounded-lg shadow-sm overflow-hidden group mx-auto">
                           <div className="relative overflow-hidden">
@@ -851,7 +851,7 @@ export default function Search() {
                             <Link to={`/Productdetails/${product.skuId}`}>
                               <img
                                 src={product.Images?.[0]?.url || FALLBACK_IMAGE}
-                                className="w-full h-40 sm:h-24 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
                                 alt={isArabic ? product.nameAr : product.nameEn}
                                 loading="lazy"
                                 decoding="async"
@@ -961,10 +961,8 @@ export default function Search() {
 
             {/* Loading indicator */}
             {isLoading && (
-              <div className="text-center w-full py-10">
-                <p className="text-gray-500">
-                  {isArabic ? "جاري تحميل المنتجات..." : "Loading products..."}
-                </p>
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
               </div>
             )}
           </div>
