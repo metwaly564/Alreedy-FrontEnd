@@ -1192,11 +1192,11 @@ const Cart = () => {
     // If we have less than 4 products, don't use the slider
     if (availableProducts.length <= 4) {
       return (
-        <div className={`mt-8`}>
-          <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
+        <div className={`-mt-8`}>
+          
+          <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right mr-[8%]" : "text-left ml-[10%]"}`}>
             {isArabic ? "منتجات قد تعجبك" : "You May also Like"}
           </h2>
-          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {availableProducts.map((product) => (
               <div key={product.skuId} className={`${style.slideItem} px-1`}>
@@ -1298,7 +1298,7 @@ const Cart = () => {
     // Otherwise, use the slider
     return (
       <div className="mt-8">
-        <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
+        <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right mr-8" : "text-left ml-8"}`}>
           {isArabic ? "منتجات قد تعجبك" : "You May also Like"}
         </h2>
         
@@ -1484,7 +1484,7 @@ const Cart = () => {
             </div>
 
             {/* Related Products Slider - Full Width */}
-            <div className="w-full">
+            <div className="w-full -mt-9">
               {renderRelatedProducts()}
             </div>
           </div>
