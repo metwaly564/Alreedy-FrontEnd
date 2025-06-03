@@ -26,13 +26,26 @@ export default function CartContextProvider(props) {
       const items = JSON.parse(storedArrayString);
       setCartProductsIds(items);
       setnumItems(items.length);
-      setCartCount(items.length); // Make sure cartCount is initialized
+      setCartCount(items.length);
     }
     
     // Fetch counts when component mounts
-    fetchCartCount();
-    fetchWishlistCount();
+    const token = localStorage.getItem("userToken");
+    if (token) {
+      fetchCartCount();
+      fetchWishlistCount();
+    } else {
+      setWishlistCount(0);
+    }
   }, []);
+
+  // Add refreshTrigger to useEffect dependencies to force re-render
+  useEffect(() => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      setWishlistCount(0);
+    }
+  }, [refreshTrigger]);
 
   // Add to wishlist function
   const addToWishlist = async (skuId) => {
@@ -79,9 +92,10 @@ export default function CartContextProvider(props) {
         const userToken = localStorage.getItem("userToken");
         
         if (!userToken) {
-          // إذا لم يكن هناك token، استخدم عدد العناصر المخزنة محليًا
+          // For non-logged in users, get count from localStorage
           const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-          setCartCount(cartItems.length);
+          const count = cartItems.length;
+          setCartCount(count);
           return;
         }
 
@@ -97,10 +111,8 @@ export default function CartContextProvider(props) {
         );
 
         if (response.data && Array.isArray(response.data)) {
-          // تعيين عدد المنتجات في السلة
           setCartCount(response.data.length);
           
-          // تحديث numItems أيضًا إذا كان متاحًا
           if (typeof setNumItems === 'function') {
             setNumItems(response.data.length);
           }

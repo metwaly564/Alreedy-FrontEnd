@@ -47,14 +47,12 @@ const {isArabic} = useContext(UserContext)
   }
 
   return (
-    <div className="fixed bottom-0 font-medium left-0 w-full bg-white border-t border-gray-200 md:hidden pt-1 " style={{zIndex:"49"}}>
-      <div className="flex justify-around items-center py-3">
+    <div className="fixed bottom-0 font-medium left-0 w-full bg-white border-t border-gray-200 md:hidden" style={{zIndex:"49"}}>
+      <div className={`flex justify-around items-center ${isUserLoggedIn ? 'pb-2 pt-3' : 'mb-[10px] mt-[-5px]'}`}>
         <NavLink to="/cart" className={`flex flex-col items-center ${isUserLoggedIn ? 'mt-[-20px]' : ''}`}>
-          {isUserLoggedIn && (
-            <span className="w-4 h-4 rounded-full bg-red-500 flex justify-center items-center text-white font-medium text-[12px] p-[10px] relative right-1 top-2 overflow-y-hidden">
-              {cartCount}
-            </span>
-          )}
+          <span className={`w-4 h-4 rounded-full bg-red-500 flex justify-center items-center text-white font-medium text-[12px] p-[10px] relative right-1 top-2 overflow-y-hidden ${cartCount > 0 ? 'opacity-90' : 'opacity-0'}`}>
+            {cartCount}
+          </span>
           <FaShoppingCart
             className={`text-lg transition-colors duration-200 ${
               location.pathname === "/cart" ? "text-[rgb(170,15,18)]" : "text-gray-600"
@@ -65,17 +63,14 @@ const {isArabic} = useContext(UserContext)
               location.pathname === "/cart" ? "text-[rgb(170,15,18)]" : "text-gray-600"
             }`}
           >
-                                 {isArabic ? "التسوق":"Shop"}
-
+            {isArabic ? "التسوق":"Shop"}
           </span>
         </NavLink>
 
         <NavLink to="/wishlist" className={`flex flex-col items-center ${isUserLoggedIn ? 'mt-[-19px]' : ''}`}>
-          {isUserLoggedIn && (
-            <span className="w-4 h-4 rounded-full bg-red-500 flex justify-center items-center text-white font-medium text-[12px] p-[9px] relative right-1 top-2 overflow-y-hidden">
-              {wishlistCount}
-            </span>
-          )}
+          <span className={`w-4 h-4 rounded-full bg-red-500 flex justify-center items-center text-white font-medium text-[12px] p-[9px] relative right-1 top-2 overflow-y-hidden ${wishlistCount > 0 ? 'opacity-90' : 'opacity-0'}`}>
+            {wishlistCount}
+          </span>
           <FaHeart
             className={`text-lg transition-colors duration-200 ${
               location.pathname === "/wishlist" ? "text-[rgb(170,15,18)]" : "text-gray-600"
@@ -90,7 +85,7 @@ const {isArabic} = useContext(UserContext)
                      </span>
         </NavLink>
        
-        <NavLink to="/Account" className="flex flex-col items-center">
+        <NavLink to="/Account" className={`flex flex-col items-center ${!isUserLoggedIn ? 'mt-[19px]' : ''}`}>
           <FaUserAlt
             className={`text-lg transition-colors duration-200 ${
               location.pathname === "/Account" ? "text-[rgb(170,15,18)]" : "text-gray-600"
@@ -101,12 +96,11 @@ const {isArabic} = useContext(UserContext)
               location.pathname === "/Account" ? "text-[rgb(170,15,18)]" : "text-gray-600"
             }`}
           >
-                                 {isArabic ? "الحساب":"Account"}
-
+            {isArabic ? "الحساب":"Account"}
           </span>
         </NavLink>
         
-        <NavLink to="/" className="flex flex-col items-center">
+        <NavLink to="/" className={`flex flex-col items-center ${!isUserLoggedIn ? 'mt-[19px]' : ''}`}>
           <FaHome
             className={`text-lg transition-colors duration-200 ${
               location.pathname === "/" ? "text-[rgb(170,15,18)]" : "text-gray-600"
@@ -117,8 +111,7 @@ const {isArabic} = useContext(UserContext)
               location.pathname === "/" ? "text-[rgb(170,15,18)]" : "text-gray-600"
             }`}
           >
-              {isArabic ? "الرئيسية":"HOME"}
-
+            {isArabic ? "الرئيسية":"HOME"}
           </span>
         </NavLink>
       </div>

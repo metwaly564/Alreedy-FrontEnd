@@ -151,8 +151,12 @@ export default function Navbar() {
     if (isLoggedIn) {
       localStorage.removeItem("userToken");
       setuserlogin(null);
+      setIsLoggedIn(false);
+      setWishlistCount(0);
+      setCartCount(0);
       triggerRefresh();
       navigate("/");
+      window.location.reload(); // Force a re-render of all components
     } else {
       navigate("/login");
     }
@@ -375,24 +379,20 @@ export default function Navbar() {
             {/* Left side - Icons */}
             <div className="flex items-center space-x-4 rtl:space-x-reverse">
               {/* Cart with counter */}
-              <div className="relative">
-                <NavLink to="/cart" className="transition-transform block">
-                  <FiShoppingCart className={`text-red-700 text-lg ${isLoggedIn ? 'mt-2' : ''}`} />
-                  {isLoggedIn && (
+              <div className="relative overflow-hidden">
+                <NavLink to="/cart" className="transition-transform block overflow-hidden">
+                  <FiShoppingCart className="text-red-700 text-lg overflow-hidden mt-2" />
                   <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${cartCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{cartCount}</span>
-                  )}
                 </NavLink>
               </div>
-
+              
               {/* Wishlist with counter */}
-              <div className="relative">
-                <NavLink to="/wishlist" className="transition-transform block">
-                  <FiHeart className={`text-red-700 text-lg ${isLoggedIn ? 'mt-2' : ''}`} />
-                  {isLoggedIn && (
+              <div className="relative overflow-hidden">
+                <NavLink to="/wishlist" className="transition-transform block overflow-hidden">
+                  <FiHeart className="text-red-700 text-lg overflow-hidden mt-2" />
                   <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${wishlistCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{wishlistCount}</span>
-                  )}
                 </NavLink>
-                </div>
+              </div>
               {/* Wishlist with counter */}
               <div className="relative">
                 <NavLink to="/Account" className="transition-transform block">
@@ -637,9 +637,7 @@ export default function Navbar() {
               <div className="relative">
                 <NavLink to="/cart" className="transition-transform block">
                   <FiShoppingCart className={`text-red-700 text-lg ${isLoggedIn ? 'mt-2' : ''}`} />
-                  {isLoggedIn && (
-                    <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${cartCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{cartCount}</span>
-                  )}
+                  <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${cartCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{cartCount}</span>
                 </NavLink>
               </div>
               {/* Account icon */}
@@ -822,7 +820,7 @@ export default function Navbar() {
 
                 {/* تواصل بنا */}
                 <Link
-                  to="/contact"
+                  to="/contactus"
                   className={`flex items-center ${isArabic ? "flex-row-reverse justify-start" : "justify-start"} text-gray-800 hover:text-primary-500 transition duration-300`}
                   onClick={toggleMenu}
                 >

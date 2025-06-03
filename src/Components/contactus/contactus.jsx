@@ -15,72 +15,81 @@ export default function contactus() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-red-950 mb-4 overflow-hidden p-6 pb-1" style={{ fontFamily: "'Alexandria', sans-serif" }}>
             {isArabic ? 'تواصل معنا' : 'Contact Us'}
           </h1>
-          
+
           <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8">
             {/* Contact Information Section */}
             <div className="mb-6 sm:mb-8">
               <h2 className="text-xl sm:text-2xl font-semibold text-red-950 mb-3 sm:mb-4" style={{ fontFamily: "'Alexandria', sans-serif" }}>
                 {isArabic ? 'معلومات الإتصال' : 'Contact Information'}
               </h2>
-              
+
               <p className="text-sm sm:text-base md:text-lg text-gray-600 mb-4 sm:mb-6 font-light">
                 {isArabic ? 'يسعدنا أن تتواصل بنا من خلال خدمة العملاء لسماع المقترحات أو الشكاوي.' : 'We are happy to hear from you through customer service for suggestions or complaints.'}
               </p>
-              
+
               <div className={`flex items-center mb-3 sm:mb-4 ${isArabic ? 'justify-end' : 'justify-start'}`}>
                 {isArabic ? (
-                  <>
-                    <FaPhone className={`text-red-950 rotate-90`} />
-                    <span className="font-bold text-base sm:text-lg ml-2">٠١٢٠١٢٠٠٠١٦ :</span>
-                    <span className={`font-semibold text-base sm:text-lg ${isArabic ? 'text-right' : 'text-left'}`}>{isArabic ? 'رقمنا الموحد' : 'Unified Number'}</span>
-                  </>
+                  <div className="flex flex-col items-end"> {/* Add flex-col to stack vertically and items-end to align right */}
+                    <span className={`font-semibold text-base sm:text-lg ${isArabic ? 'text-right' : 'text-left'}`}>
+                      {isArabic ? 'رقمنا الموحد' : ''}
+                    </span>
+
+                    <div className="flex items-center mt-1"> {/* Add mt-1 for a small top margin */}
+                      <span className="font-bold text-base sm:text-lg m-1 mr-2">٠١٢٠١٢٠٠٠١٦</span>
+                      <FaPhone className={`text-red-950 rotate-90`} />
+                    </div>
+                  </div>
                 ) : (
                   <>
-                    <span className="font-semibold text-base sm:text-lg mr-2">Unified Number:</span>
-                    <span className="font-bold text-base sm:text-lg">01201200016</span>
-                    <FaPhone className={`text-red-950 rotate-90 ml-2`} />
+                    <div className="flex flex-col items-start">
+                      <span className="font-semibold text-base sm:text-lg text-left">Hotline:</span>
+                      <div className="flex items-center mt-1"> {/* mt-1 adds a small space between the lines */}
+                        <FaPhone className="text-red-950 rotate-90 mr-2" />
+                        <span className="font-bold text-base sm:text-lg">01201200016</span>
+                      </div>
+                    </div>
                   </>
                 )}
               </div>
             </div>
-            
+
             {/* Social Media Section */}
             <div className="mb-6 sm:mb-8">
               <h3 className="text-lg sm:text-xl font-semibold text-red-950 mb-3 sm:mb-4" style={{ fontFamily: "'Alexandria', sans-serif" }}>
                 {isArabic ? 'تابعنا على' : 'Follow Us'}
               </h3>
-              
+
               <div className={`flex ${isArabic ? 'justify-end' : 'justify-start'} space-x-3 sm:space-x-4 md:space-x-6`}>
-                <a 
-                  href="https://www.facebook.com/share/1HtdV2U3sX/?mibextid=wwXIfr" 
-                  target="_blank" 
+                <a
+                  href="https://www.facebook.com/share/1HtdV2U3sX/?mibextid=wwXIfr"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-red-950 hover:text-red-700 transition-colors duration-300"
                   aria-label="Facebook"
                 >
                   <FaFacebook size={24} className="sm:w-7 sm:h-7" />
                 </a>
-                <a 
-                  href="https://www.instagram.com/reedy_pharmacy/profilecard/?igsh=MWx5aHJsZXRpOTdubg==" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/reedy_pharmacy/profilecard/?igsh=MWx5aHJsZXRpOTdubg=="
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-red-950 hover:text-red-700 transition-colors duration-300"
                   aria-label="Instagram"
                 >
                   <FaInstagram size={24} className="sm:w-7 sm:h-7" />
                 </a>
-                <a 
-                  href="https://www.tiktok.com/@reedy_pharmacy?_t=ZS-8wKDx2Qfrai&_r=1" 
-                  target="_blank" 
+                <a
+                  href="https://www.tiktok.com/@reedy_pharmacy?_t=ZS-8wKDx2Qfrai&_r=1"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-red-950 hover:text-red-700 transition-colors duration-300"
                   aria-label="TikTok"
                 >
                   <FaTiktok size={24} className="sm:w-7 sm:h-7" />
                 </a>
-                <a 
-                  href="https://wa.me/201201200016" 
-                  target="_blank" 
+                <a
+                  href="https://wa.me/201201200016"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="text-red-950 hover:text-red-700 transition-colors duration-300"
                   aria-label="WhatsApp"
@@ -89,15 +98,15 @@ export default function contactus() {
                 </a>
               </div>
             </div>
-            
+
             {/* Branches Section */}
             <div>
               <h3 className="text-lg sm:text-xl font-semibold text-red-950 mb-3 sm:mb-4" style={{ fontFamily: "'Alexandria', sans-serif" }}>
                 {isArabic ? 'توجه إلى فروعنا' : 'Visit Our Branches'}
               </h3>
-              
-              <Link 
-                to="/branches" 
+
+              <Link
+                to="/branches"
                 className="inline-flex items-center text-sm sm:text-base text-red-950 hover:text-red-700 transition-colors duration-300 font-medium"
               >
                 {isArabic ? (
