@@ -96,7 +96,7 @@ const PromoCodesAnalysis = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans -mt-12">
+    <div className="min-h-screen bg-gray-50 font-sans mt-16">
       <div className="container mx-auto px-4">
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-semibold mb-6 text-gray-800">Promo Codes Analysis</h2>
