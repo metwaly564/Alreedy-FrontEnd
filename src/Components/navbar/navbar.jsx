@@ -626,7 +626,7 @@ export default function Navbar() {
               </div>
               {/* Wishlist icon */}
               <div className="relative">
-                <NavLink to="/wishlist" className="hover:scale-110 transition-transform block">
+                <NavLink to="/wishlist" className="transition-transform block">
                   <FiHeart className={`text-red-700 text-lg ${isLoggedIn ? 'mt-2' : ''}`} />
                   {isLoggedIn && (
                     <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${wishlistCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{wishlistCount}</span>
