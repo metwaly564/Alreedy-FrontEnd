@@ -78,39 +78,31 @@ export default function Search() {
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      let url = `https://reedyph.com/api/v1/products?search=${searchkey}`;
+      let allProducts = [];
+      let currentPage = 1;
+      let hasMorePages = true;
 
-      if (selectedCategory) {
-        url += `&categoryId=${selectedCategory}`;
+      while (hasMorePages) {
+        let url = `https://reedyph.com/api/v1/products?search=${searchkey}&page=${currentPage}&limit=100`;
+
+        if (selectedCategory) {
+          url += `&categoryId=${selectedCategory}`;
+        }
+
+        const response = await axios.get(url);
+        const { products, totalPages } = response.data;
+        
+        allProducts = [...allProducts, ...products];
+        
+        if (currentPage >= totalPages) {
+          hasMorePages = false;
+        } else {
+          currentPage++;
+        }
       }
 
-      // Important: Remove price filtering from the API call here if you want to handle it locally
-      // if (priceFilterApplied) {
-      //   url += `&minPrice=${minSearch}&maxPrice=${maxSearch}`;
-      // }
-
-      // Do NOT send sorting parameters to the API if you intend to sort locally.
-      // let sortParam = currentSort;
-      // if (currentSort === "price_asc") {
-      //   sortParam = "price_asc";
-      // } else if (currentSort === "price_desc") {
-      //   sortParam = "price_desc";
-      // } else if (currentSort === "name_asc") {
-      //   sortParam = "name_asc";
-      // } else if (currentSort === "name_desc") {
-      //   sortParam = "name_desc";
-      // } else if (currentSort === "newest") {
-      //   sortParam = "createdAt_desc";
-      // } else if (currentSort === "oldest") {
-      //   sortParam = "createdAt_asc";
-      // }
-      // url += `&sort=${sortParam}`;
-
-      const response = await axios.get(url);
-
-      // Directly set search results and let the useEffect handle filtering and sorting
-      setSearchResult(response.data.products);
-      setFilteredProducts(response.data.products); // Initialize with all products
+      setSearchResult(allProducts);
+      setFilteredProducts(allProducts);
     } catch (error) {
       console.error("Error fetching products:", error);
       toast.error(isArabic ? "فشل تحميل المنتجات" : "Failed to load products", {
@@ -810,23 +802,18 @@ export default function Search() {
           </div>
 
           {/* Main Content Area */}
-          <div className={`w-full flex md:w-[98%] lg:w-full md:h-[calc(100vh-18vh)] overflow-y-auto ${isArabic ? 'md:order-first' : ''} md:mr-2`}>
-            {/* Products Grid */}
+          <div className={`w-full ${isArabic ? 'md:order-first' : ''}`}>            {/* Products Grid */}
             {!isLoading && (
-              <div
-                className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3 md:gap-0`}
-                dir={isArabic ? "rtl" : "ltr"}
-              >
+             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3">
                 {filteredProducts?.length > 0 ? (
                   filteredProducts
                     .filter(product => product.isActive && !product.isDeleted)
-                    // The primary sorting by rank and ID is handled inside applySorting now
                     .map((product) => (
                       <div
                         key={product.skuId}
-                        className={`${style.slideItem} group w-full overflow-hidden`}
+                        className={`${style.slideItem} group w-full`}
                       >
-                        <div className="relative bg-white rounded-lg shadow-sm overflow-hidden group mx-auto">
+                        <div className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto">
                           <div className="relative overflow-hidden">
                             {product.availableStock > 0 &&
                               product.priceBefore &&
@@ -886,17 +873,14 @@ export default function Search() {
                             </div>
                           </div>
                           <div className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden">
-                            <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
+                            <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"} ${isArabic ? "line-clamp-1 text-ellipsis overflow-hidden" : "line-clamp-1"}`} style={isArabic ? { direction: 'rtl', textAlign: 'right' } : {}}>
                               {isArabic ? product.nameAr : product.nameEn}
                             </h3>
                             <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                               {product.company || "Company Name"}
                             </p>
 
-                            <p
-                              className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
-                              dir={isArabic ? "rtl" : "ltr"}
-                            >
+                            <p className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`} dir={isArabic ? "rtl" : "ltr"}>
                               <span className={`text-gray-500 text-[15px] ${isArabic ? "mr-1" : "ml-1"}`}>
                                 {isArabic ? `${product.priceAfter} جنية` : `${product.priceAfter} EGP`}
                               </span>
@@ -910,8 +894,7 @@ export default function Search() {
                               {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
                             </p>
                             <button
-                              className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed" : ""
-                                }`}
+                              className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center pt-[1.1em]" : ""}`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 if (product.availableStock > 0) {
@@ -934,7 +917,7 @@ export default function Search() {
                                   <img src={cart} alt="Cart" className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-[1px] mb-[3px]" />
                                 </>
                               ) : (
-                                <span className="block mb-1 mt-[0.1em]">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
+                                <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
                               )}
                             </button>
                           </div>
