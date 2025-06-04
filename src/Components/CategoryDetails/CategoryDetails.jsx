@@ -676,7 +676,7 @@ export default function CategoryDetails() {
                                 </span>
                               )}
                             </p>
-                            <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`}>
+                            <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
                               {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
                             </p>
                             <button
@@ -820,7 +820,7 @@ export default function CategoryDetails() {
                       </span>
                     )}
                   </p>
-                  <p className={`text-xs sm:text-sm text-gray-500 mb-4 line-clamp-3 ${isArabic ? "text-right" : "text-left"}`}>
+                  <p className={`text-xs sm:text-sm text-gray-500 mb-4 line-clamp-3 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
                     {isArabic ? selectedProduct.cardDescriptionAr : selectedProduct.cardDescriptionEn}
                   </p>
 

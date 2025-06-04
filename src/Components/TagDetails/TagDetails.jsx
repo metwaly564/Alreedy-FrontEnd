@@ -620,7 +620,7 @@ export default function TagDetails() {
 
             {!isLoading && (
               <div
-                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3 md:gap-0"
+                className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-x-1 gap-y-3 sm:gap-x-1 sm:gap-y-3 md:gap-0"
                 dir={isArabic ? "rtl" : "ltr"}
               >
                 {filteredProducts.map((product) => (
@@ -633,12 +633,12 @@ export default function TagDetails() {
                             e.preventDefault();
                             handleQuickViewClick(product);
                           }}
-                          className="block"
+                          className="block overflow-hidden"
                         >
                           <img
                             src={product.Images?.[0]?.url || FALLBACK_IMAGE}
                             alt={product.nameAr || "Product"}
-                            className="w-full h-40 sm:h-24 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                            className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
                             loading="lazy"
                             onError={(e) => {
                               e.target.onerror = null;
@@ -701,7 +701,7 @@ export default function TagDetails() {
                             </span>
                           )}
                         </p>
-                        <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`}>
+                        <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
                           {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
                         </p>
                         <button
@@ -721,15 +721,16 @@ export default function TagDetails() {
                             }
                           }}
                           disabled={product.availableStock <= 0}
-                          className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed" : ""}`}
+                          className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
+                          style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
                         >
                           {product.availableStock > 0 ? (
                             <>
                               <img src={cart} alt="Cart" className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-[1px] mb-[3px]" />
-                              {isArabic ? "أضف إلى السلة" : "Add to cart"}
+                              {isArabic ? "أضف إلى السلة" : "Add to Cart"}
                             </>
                           ) : (
-                            <span className="block mb-1 ">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
+                            <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
                           )}
                         </button>
                       </div>

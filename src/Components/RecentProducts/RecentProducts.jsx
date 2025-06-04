@@ -2,7 +2,7 @@
 import style from "./RecentProducts.module.css";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { CartContext } from "../../Context/CartContexrt";
 import toast, { Toaster } from "react-hot-toast";
 import Slider from "react-slick";
@@ -39,6 +39,73 @@ const CustomRightArrow = ({ onClick }) => (
     </svg>
   </button>
 );
+
+// Add animation keyframes
+const fadeInUp = `
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+`;
+
+// Add styles to document
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = fadeInUp;
+document.head.appendChild(styleSheet);
+
+// Create a custom hook for intersection observer
+const useIntersectionObserver = (options = {}) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const targetRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, {
+      threshold: 0.1,
+      ...options
+    });
+
+    const currentTarget = targetRef.current;
+    if (currentTarget) {
+      observer.observe(currentTarget);
+    }
+
+    return () => {
+      if (currentTarget) {
+        observer.unobserve(currentTarget);
+      }
+    };
+  }, [options]);
+
+  return [targetRef, isIntersecting];
+};
+
+// Create an animated section wrapper with faster transitions
+const AnimatedSection = ({ children }) => {
+  const [ref, isVisible] = useIntersectionObserver();
+  
+  return (
+    <div
+      ref={ref}
+      style={{
+        opacity: isVisible ? 1 : 0,
+        animation: isVisible ? 'fadeInUp 0.4s ease-out forwards' : 'none',
+        transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.4s ease-out, transform 0.4s ease-out',
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 export default function RecentProducts() {
   const { cartCount, setCartCount, wishlistCount, setWishlistCount, fetchCartCount, fetchWishlistCount } = useContext(CartContext);
@@ -535,169 +602,31 @@ export default function RecentProducts() {
 
                   return (
                     <React.Fragment key={category.id}>
-                      <div className="mb-4 overflow-y-hidden">
-                        <div className={`flex justify-between items-center mb-4 px-4 overflow-y-hidden ${isArabic ? "flex-row" : "flex-row-reverse"}`}>
-                          <Link
-                            to={`/CategoryDetails/${category.id}`}
-                            className=" text-red-600 hover:text-red-700 text-[12px] font-medium overflow-y-hidden"
-                          >
-                            {isArabic ? "عرض الكل" : "View All"}
-                          </Link>
-                          <h2 className="alexandria-500 text-[16px] overflow-y-hidden capitalize">
-                            {isArabic ? category.nameAr : category.nameEn}
-                          </h2>
-                        </div>
+                      <AnimatedSection>
+                        <div className="mb-4 overflow-hidden">
+                          <div className={`flex justify-between items-center mb-4 px-4 overflow-y-hidden ${isArabic ? "flex-row" : "flex-row-reverse"}`}>
+                            <Link
+                              to={`/CategoryDetails/${category.id}`}
+                              className="text-red-600 hover:text-red-700 text-[12px] font-medium overflow-y-hidden"
+                            >
+                              {isArabic ? "عرض الكل" : "View All"}
+                            </Link>
+                            <h2 className="alexandria-500 text-[16px] overflow-y-hidden capitalize">
+                              {isArabic ? category.nameAr : category.nameEn}
+                            </h2>
+                          </div>
 
-                        {activeProducts.length < 8 ? (
-                          <>
-                            {/* Desktop: flex row - Products not in slider */}
-                            <div className="hidden lg:flex justify-center gap-2 px-4">
-                              {(isArabic ? [...displayProducts].reverse() : displayProducts).map((product) => (
-                                <div
-                                  key={product.skuId}
-                                  className={`${style.slideItem} group w-[calc(100%/8)]`}
-                                >
-                                  <div className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto">
-                                    <div className="relative overflow-hidden">
-                                      {product.availableStock > 0 &&
-                                        product.priceBefore &&
-                                        product.priceAfter &&
-                                        product.priceBefore > product.priceAfter && (
-                                          <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
-                                            {Math.round(
-                                              ((product.priceBefore - product.priceAfter) /
-                                                product.priceBefore) *
-                                              100
-                                            )}
-                                            % {isArabic ? "خصم" : "Off"}
-                                          </div>
-                                        )}
-
-                                      {product.availableStock <= 0 && (
-                                        <div className="absolute top-2 left-2 bg-gray-600 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
-                                          {isArabic ? "غير متوفر" : "Out of stock"}
-                                        </div>
-                                      )}
-
-                                      <a
-                                        href={`/Productdetails/${product.skuId}`}
-                                        onClick={e => {
-                                          e.preventDefault();
-                                          handleProductClick(product.skuId, `/Productdetails/${product.skuId}`);
-                                        }}
-                                      >
-                                        <img
-                                          src={product.Images?.[0]?.url || FALLBACK_IMAGE}
-                                          className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
-                                          alt={product.nameAr || "Product"}
-                                          loading="lazy"
-                                          decoding="async"
-                                          onError={(e) => (e.target.src = FALLBACK_IMAGE)}
-                                        />
-                                      </a>
-                                      <div className="absolute top-2 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                                        <button
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            addToWishlist(product.skuId);
-                                          }}
-                                          className="p-1.5 bg-gray-100 rounded-full transition-colors"
-                                          title={isArabic ? "Add to Wishlist" : "أضف للمفضلة"}
-                                        >
-                                          <FaHeart className="h-6 w-6 sm:h-4 sm:w-4 text-red-500" />
-                                        </button>
-                                        <button
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            handleQuickViewClick(product);
-                                          }}
-                                          className="p-1.5 bg-gray-100 rounded-full transition-colors"
-                                          title={isArabic ? "نظره سريعه" : "Quick View"}
-                                        >
-                                          <FaEye className="h-6 w-6 sm:h-4 sm:w-4 text-gray-700" />
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <div className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden ">
-                                      <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
-                                        {isArabic ? product.nameAr : product.nameEn}
-                                      </h3>
-                                      <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                                        {product.company || "Company Name"}
-                                      </p>
-
-                                      <p
-                                        className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
-                                        dir={isArabic ? "rtl" : "ltr"}
-                                      >
-                                        <span className={`text-gray-500 text-[15px] ${isArabic ? "mr-1" : "ml-1"}`}>
-                                          {isArabic ? `${product.priceAfter} جنية` : `${product.priceAfter} EGP`}
-                                        </span>
-                                        {product.priceBefore && product.priceBefore > product.priceAfter && (
-                                          <span className={`text-red-400 line-through text-[11px] ${isArabic ? "mr-1" : "ml-1"}`}>
-                                            {isArabic ? `${product.priceBefore} جنية` : `${product.priceBefore} EGP`}
-                                          </span>
-                                        )}
-                                      </p>
-                                      <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`}>
-                                        {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
-                                      </p>
-                                      <button
-                                        className={`${style.addToCartButton} flex text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
-                                        style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          if (product.availableStock > 0) {
-                                            addToCart(product.skuId);
-                                          } else {
-                                            toast.error(isArabic ? "المنتج غير متوفر" : "Product Out of Stock", { style: { fontFamily: "Alexandria, sans-serif", fontWeight: 300 } });
-                                          }
-                                        }}
-                                        disabled={product.availableStock <= 0}
-                                      >
-                                        {product.availableStock <= 0 ? (
-                                          isArabic ? "غير متوفر" : "Out of Stock"
-                                        ) : (
-                                          <>
-                                            <img
-                                              src={cart}
-                                              alt="Cart"
-                                              className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-[1px] mb-[3px]"
-                                            />
-                                            {isArabic ? "أضف إلى السلة" : "Add to Cart"}
-                                          </>
-                                        )}
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                            {/* Mobile and Slider Products */}
-                            <div className="block lg:hidden">
-                              <Carousel
-                                key={displayProducts[0]?.skuId}
-                                responsive={productCarouselResponsive}
-                                infinite={false}
-                                arrows={true}
-                                rtl={isArabic}
-                                keyBoardControl={true}
-                                initialSlide={0}
-                                containerClass={`product-slider ${style.sliderContainer}`}
-                                customLeftArrow={<CustomLeftArrow />}
-                                customRightArrow={<CustomRightArrow />}
-                                renderButtonGroupOutside={true}
-                              >
-                                {displayProducts.map((product) => (
+                          {activeProducts.length < 8 ? (
+                            <>
+                              {/* Desktop: flex row - Products not in slider */}
+                              <div className="hidden lg:flex justify-center gap-2 px-4">
+                                {(isArabic ? [...displayProducts].reverse() : displayProducts).map((product) => (
                                   <div
                                     key={product.skuId}
-                                    className={`${style.slideItem} px-1 group`}
+                                    className={`${style.slideItem} group w-[calc(100%/8)]`}
                                   >
                                     <div className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto">
                                       <div className="relative overflow-hidden">
-                                        {/* Show discount badge only if product is available and has discount */}
                                         {product.availableStock > 0 &&
                                           product.priceBefore &&
                                           product.priceAfter &&
@@ -712,7 +641,6 @@ export default function RecentProducts() {
                                             </div>
                                           )}
 
-                                        {/* Show out of stock badge if product is not available */}
                                         {product.availableStock <= 0 && (
                                           <div className="absolute top-2 left-2 bg-gray-600 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
                                             {isArabic ? "غير متوفر" : "Out of stock"}
@@ -735,8 +663,7 @@ export default function RecentProducts() {
                                             onError={(e) => (e.target.src = FALLBACK_IMAGE)}
                                           />
                                         </a>
-                                        {/* Icons */}
-                                        <div className="absolute top-1 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                        <div className="absolute top-2 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                                           <button
                                             onClick={(e) => {
                                               e.preventDefault();
@@ -746,7 +673,6 @@ export default function RecentProducts() {
                                             className="p-1.5 bg-gray-100 rounded-full transition-colors"
                                             title={isArabic ? "Add to Wishlist" : "أضف للمفضلة"}
                                           >
-                                            <FaHeart className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-red-500" />
                                           </button>
                                           <button
                                             onClick={(e) => {
@@ -757,20 +683,18 @@ export default function RecentProducts() {
                                             className="p-1.5 bg-gray-100 rounded-full transition-colors"
                                             title={isArabic ? "نظره سريعه" : "Quick View"}
                                           >
-                                            <FaEye className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-gray-700" />
+                                            <FaEye className="h-6 w-6 sm:h-4 sm:w-4 text-gray-700" />
                                           </button>
                                         </div>
                                       </div>
-                                      {/* Product info */}
-                                      <div
-                                        className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden text-right"
-                                      >
+                                      <div className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden ">
                                         <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
                                           {isArabic ? product.nameAr : product.nameEn}
                                         </h3>
                                         <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                                           {product.company || "Company Name"}
                                         </p>
+
                                         <p
                                           className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
                                           dir={isArabic ? "rtl" : "ltr"}
@@ -784,11 +708,11 @@ export default function RecentProducts() {
                                             </span>
                                           )}
                                         </p>
-                                        <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`}>
+                                        <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
                                           {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
                                         </p>
                                         <button
-                                          className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row-reverse ${isArabic ? "flex-row" : ""} gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
+                                          className={`${style.addToCartButton} flex text-[12px] font-semibold sm:text-[12px] flex flex-row gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
                                           style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
                                           onClick={(e) => {
                                             e.stopPropagation();
@@ -801,13 +725,13 @@ export default function RecentProducts() {
                                           disabled={product.availableStock <= 0}
                                         >
                                           {product.availableStock <= 0 ? (
-                                            <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
+                                            isArabic ? "غير متوفر" : "Out of Stock"
                                           ) : (
                                             <>
                                               <img
                                                 src={cart}
                                                 alt="Cart"
-                                                className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-1 mb-[3px]"
+                                                className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-[1px] mb-[3px]"
                                               />
                                               {isArabic ? "أضف إلى السلة" : "Add to Cart"}
                                             </>
@@ -817,170 +741,315 @@ export default function RecentProducts() {
                                     </div>
                                   </div>
                                 ))}
-                              </Carousel>
-                            </div>
-                          </>
-                        ) : (
-                          <Carousel
-                            key={displayProducts[0]?.skuId}
-                            responsive={productCarouselResponsive}
-                            infinite={false}
-                            arrows={true}
-                            rtl={isArabic}
-                            keyBoardControl={true}
-                            initialSlide={0}
-                            containerClass={`product-slider ${style.sliderContainer}`}
-                            customLeftArrow={<CustomLeftArrow />}
-                            customRightArrow={<CustomRightArrow />}
-                            renderButtonGroupOutside={true}
-                          >
-                            {displayProducts.map((product) => (
-                              <div
-                                key={product.skuId}
-                                className={`${style.slideItem} px-1 group`}
-                              >
-                                <div
-                                  className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto "
-
+                              </div>
+                              {/* Mobile and Slider Products */}
+                              <div className="block lg:hidden">
+                                <Carousel
+                                  key={displayProducts[0]?.skuId}
+                                  responsive={productCarouselResponsive}
+                                  infinite={false}
+                                  arrows={true}
+                                  rtl={isArabic}
+                                  keyBoardControl={true}
+                                  initialSlide={0}
+                                  containerClass={`product-slider ${style.sliderContainer}`}
+                                  customLeftArrow={<CustomLeftArrow />}
+                                  customRightArrow={<CustomRightArrow />}
+                                  renderButtonGroupOutside={true}
                                 >
-                                  <div className="relative overflow-hidden">
-                                    {/* Show discount badge only if product is available and has discount */}
-                                    {product.availableStock > 0 &&
-                                      product.priceBefore &&
-                                      product.priceAfter &&
-                                      product.priceBefore > product.priceAfter && (
-                                        <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
-                                          {Math.round(
-                                            ((product.priceBefore - product.priceAfter) /
-                                              product.priceBefore) *
-                                            100
+                                  {displayProducts.map((product) => (
+                                    <div
+                                      key={product.skuId}
+                                      className={`${style.slideItem} px-1 group`}
+                                    >
+                                      <div className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto">
+                                        <div className="relative overflow-hidden">
+                                          {/* Show discount badge only if product is available and has discount */}
+                                          {product.availableStock > 0 &&
+                                            product.priceBefore &&
+                                            product.priceAfter &&
+                                            product.priceBefore > product.priceAfter && (
+                                              <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
+                                                {Math.round(
+                                                  ((product.priceBefore - product.priceAfter) /
+                                                    product.priceBefore) *
+                                                  100
+                                                )}
+                                                % {isArabic ? "خصم" : "Off"}
+                                              </div>
+                                            )}
+
+                                          {/* Show out of stock badge if product is not available */}
+                                          {product.availableStock <= 0 && (
+                                            <div className="absolute top-2 left-2 bg-gray-600 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
+                                              {isArabic ? "غير متوفر" : "Out of stock"}
+                                            </div>
                                           )}
-                                          % {isArabic ? "خصم" : "Off"}
+
+                                          <a
+                                            href={`/Productdetails/${product.skuId}`}
+                                            onClick={e => {
+                                              e.preventDefault();
+                                              handleProductClick(product.skuId, `/Productdetails/${product.skuId}`);
+                                            }}
+                                          >
+                                            <img
+                                              src={product.Images?.[0]?.url || FALLBACK_IMAGE}
+                                              className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                              alt={product.nameAr || "Product"}
+                                              loading="lazy"
+                                              decoding="async"
+                                              onError={(e) => (e.target.src = FALLBACK_IMAGE)}
+                                            />
+                                          </a>
+                                          {/* Icons */}
+                                          <div className="absolute top-1 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                            <button
+                                              onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                addToWishlist(product.skuId);
+                                              }}
+                                              className="p-1.5 bg-gray-100 rounded-full transition-colors"
+                                              title={isArabic ? "Add to Wishlist" : "أضف للمفضلة"}
+                                            >
+                                              <FaHeart className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-red-500" />
+                                            </button>
+                                            <button
+                                              onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleQuickViewClick(product);
+                                              }}
+                                              className="p-1.5 bg-gray-100 rounded-full transition-colors"
+                                              title={isArabic ? "نظره سريعه" : "Quick View"}
+                                            >
+                                              <FaEye className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-gray-700" />
+                                            </button>
+                                          </div>
+                                        </div>
+                                        {/* Product info */}
+                                        <div
+                                          className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden text-right"
+                                        >
+                                          <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
+                                            {isArabic ? product.nameAr : product.nameEn}
+                                          </h3>
+                                          <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                                            {product.company || "Company Name"}
+                                          </p>
+                                          <p
+                                            className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
+                                            dir={isArabic ? "rtl" : "ltr"}
+                                          >
+                                            <span className={`text-gray-500 text-[15px] ${isArabic ? "mr-1" : "ml-1"}`}>
+                                              {isArabic ? `${product.priceAfter} جنية` : `${product.priceAfter} EGP`}
+                                            </span>
+                                            {product.priceBefore && product.priceBefore > product.priceAfter && (
+                                              <span className={`text-red-400 line-through text-[11px] ${isArabic ? "mr-1" : "ml-1"}`}>
+                                                {isArabic ? `${product.priceBefore} جنية` : `${product.priceBefore} EGP`}
+                                              </span>
+                                            )}
+                                          </p>
+                                          <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
+                                            {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
+                                          </p>
+                                          <button
+                                            className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row-reverse ${isArabic ? "flex-row" : ""} gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
+                                            style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              if (product.availableStock > 0) {
+                                                addToCart(product.skuId);
+                                              } else {
+                                                toast.error(isArabic ? "المنتج غير متوفر" : "Product Out of Stock", { style: { fontFamily: "Alexandria, sans-serif", fontWeight: 300 } });
+                                              }
+                                            }}
+                                            disabled={product.availableStock <= 0}
+                                          >
+                                            {product.availableStock <= 0 ? (
+                                              <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
+                                            ) : (
+                                              <>
+                                                <img
+                                                  src={cart}
+                                                  alt="Cart"
+                                                  className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-1 mb-[3px]"
+                                                />
+                                                {isArabic ? "أضف إلى السلة" : "Add to Cart"}
+                                              </>
+                                            )}
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </Carousel>
+                              </div>
+                            </>
+                          ) : (
+                            <Carousel
+                              key={displayProducts[0]?.skuId}
+                              responsive={productCarouselResponsive}
+                              infinite={false}
+                              arrows={true}
+                              rtl={isArabic}
+                              keyBoardControl={true}
+                              initialSlide={0}
+                              containerClass={`product-slider ${style.sliderContainer}`}
+                              customLeftArrow={<CustomLeftArrow />}
+                              customRightArrow={<CustomRightArrow />}
+                              renderButtonGroupOutside={true}
+                            >
+                              {displayProducts.map((product) => (
+                                <div
+                                  key={product.skuId}
+                                  className={`${style.slideItem} px-1 group`}
+                                >
+                                  <div
+                                    className="relative bg-white rounded-lg shadow-md overflow-hidden group mx-auto "
+
+                                  >
+                                    <div className="relative overflow-hidden">
+                                      {/* Show discount badge only if product is available and has discount */}
+                                      {product.availableStock > 0 &&
+                                        product.priceBefore &&
+                                        product.priceAfter &&
+                                        product.priceBefore > product.priceAfter && (
+                                          <div className="absolute top-2 left-2 bg-red-500 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
+                                            {Math.round(
+                                              ((product.priceBefore - product.priceAfter) /
+                                                product.priceBefore) *
+                                              100
+                                            )}
+                                            % {isArabic ? "خصم" : "Off"}
+                                          </div>
+                                        )}
+
+                                      {/* Show out of stock badge if product is not available */}
+                                      {product.availableStock <= 0 && (
+                                        <div className="absolute top-2 left-2 bg-gray-600 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
+                                          {isArabic ? "غير متوفر" : "Out of stock"}
                                         </div>
                                       )}
 
-                                    {/* Show out of stock badge if product is not available */}
-                                    {product.availableStock <= 0 && (
-                                      <div className="absolute top-2 left-2 bg-gray-600 text-white text-[9px] px-1 py-[2px] rounded-md z-10 font-alexandria font-medium">
-                                        {isArabic ? "غير متوفر" : "Out of stock"}
+                                      <a
+                                        href={`/Productdetails/${product.skuId}`}
+                                        onClick={e => {
+                                          e.preventDefault();
+                                          handleProductClick(product.skuId, `/Productdetails/${product.skuId}`);
+                                        }}
+                                      >
+                                        <img
+                                          src={product.Images?.[0]?.url || FALLBACK_IMAGE}
+                                          className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
+                                          alt={product.nameAr || "Product"}
+                                          loading="lazy"
+                                          decoding="async"
+                                          onError={(e) => (e.target.src = FALLBACK_IMAGE)}
+                                        />
+                                      </a>
+                                      {/* Icons */}
+                                      <div className="absolute top-1 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                        <button
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            addToWishlist(product.skuId);
+                                          }}
+                                          className="p-1.5 bg-gray-100 rounded-full transition-colors"
+                                          title={isArabic ? "Add to Wishlist" : "أضف للمفضلة"}
+                                        >
+                                          <FaHeart className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-red-500" />
+                                        </button>
+                                        <button
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleQuickViewClick(product);
+                                          }}
+                                          className="p-1.5 bg-gray-100 rounded-full transition-colors"
+                                          title={isArabic ? "نظره سريعه" : "Quick View"}
+                                        >
+                                          <FaEye className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-gray-700" />
+                                        </button>
                                       </div>
-                                    )}
-
-                                    <a
-                                      href={`/Productdetails/${product.skuId}`}
-                                      onClick={e => {
-                                        e.preventDefault();
-                                        handleProductClick(product.skuId, `/Productdetails/${product.skuId}`);
-                                      }}
+                                    </div>
+                                    {/* Product info */}
+                                    <div
+                                      className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden text-right"
+                                      dir="rtl"
                                     >
-                                      <img
-                                        src={product.Images?.[0]?.url || FALLBACK_IMAGE}
-                                        className="w-full h-48 sm:h-32 object-contain p-2 transition-transform duration-300 ease-in-out hover:scale-110"
-                                        alt={product.nameAr || "Product"}
-                                        loading="lazy"
-                                        decoding="async"
-                                        onError={(e) => (e.target.src = FALLBACK_IMAGE)}
-                                      />
-                                    </a>
-                                    {/* Icons */}
-                                    <div className="absolute top-1 right-3 flex flex-col space-y-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                                      <button
-                                        onClick={(e) => {
-                                          e.preventDefault();
-                                          e.stopPropagation();
-                                          addToWishlist(product.skuId);
-                                        }}
-                                        className="p-1.5 bg-gray-100 rounded-full transition-colors"
-                                        title={isArabic ? "Add to Wishlist" : "أضف للمفضلة"}
+                                      <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
+                                        {isArabic ? product.nameAr : product.nameEn}
+                                      </h3>
+                                      <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                                        {product.company || "Company Name"}
+                                      </p>
+                                      <p
+                                        className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
+                                        dir={isArabic ? "rtl" : "ltr"}
                                       >
-                                        <FaHeart className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-red-500" />
-                                      </button>
+                                        <span className={`text-gray-500 text-[15px] ${isArabic ? "mr-1" : "ml-1"}`}>
+                                          {isArabic ? `${product.priceAfter} جنية` : `${product.priceAfter} EGP`}
+                                        </span>
+                                        {product.priceBefore && product.priceBefore > product.priceAfter && (
+                                          <span className={`text-red-400 line-through text-[11px] ${isArabic ? "mr-1" : "ml-1"}`}>
+                                            {isArabic ? `${product.priceBefore} جنية` : `${product.priceBefore} EGP`}
+                                          </span>
+                                        )}
+                                      </p>
+                                      <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`} style={{ minHeight: '31px' }}>
+                                        {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
+                                      </p>
                                       <button
+                                        className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row-reverse ${isArabic ? "flex-row" : ""} gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
+                                        style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
                                         onClick={(e) => {
-                                          e.preventDefault();
                                           e.stopPropagation();
-                                          handleQuickViewClick(product);
+                                          if (product.availableStock > 0) {
+                                            addToCart(product.skuId);
+                                          } else {
+                                            toast.error(isArabic ? "المنتج غير متوفر" : "Product Out of Stock", { style: { fontFamily: "Alexandria, sans-serif", fontWeight: 300 } });
+                                          }
                                         }}
-                                        className="p-1.5 bg-gray-100 rounded-full transition-colors"
-                                        title={isArabic ? "نظره سريعه" : "Quick View"}
+                                        disabled={product.availableStock <= 0}
                                       >
-                                        <FaEye className="h-[13px] w-[13px] sm:h-4 sm:w-4 text-gray-700" />
+                                        {product.availableStock <= 0 ? (
+                                          <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
+                                        ) : (
+                                          <>
+                                            <img
+                                              src={cart}
+                                              alt="Cart"
+                                              className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-1 mb-[3px]"
+                                            />
+                                            {isArabic ? "أضف إلى السلة" : "Add to Cart"}
+                                          </>
+                                        )}
                                       </button>
                                     </div>
                                   </div>
-                                  {/* Product info */}
-                                  <div
-                                    className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden text-right"
-                                    dir="rtl"
-                                  >
-                                    <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
-                                      {isArabic ? product.nameAr : product.nameEn}
-                                    </h3>
-                                    <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                                      {product.company || "Company Name"}
-                                    </p>
-                                    <p
-                                      className={`flex items-center text-gray-600 mb-0.5 sm:mb-1 text-[15px] font-medium ${isArabic ? "justify-start text-right" : "justify-start text-left"}`}
-                                      dir={isArabic ? "rtl" : "ltr"}
-                                    >
-                                      <span className={`text-gray-500 text-[15px] ${isArabic ? "mr-1" : "ml-1"}`}>
-                                        {isArabic ? `${product.priceAfter} جنية` : `${product.priceAfter} EGP`}
-                                      </span>
-                                      {product.priceBefore && product.priceBefore > product.priceAfter && (
-                                        <span className={`text-red-400 line-through text-[11px] ${isArabic ? "mr-1" : "ml-1"}`}>
-                                          {isArabic ? `${product.priceBefore} جنية` : `${product.priceBefore} EGP`}
-                                        </span>
-                                      )}
-                                    </p>
-                                    <p className={`text-gray-500 font-medium sm:mb-1 text-[10px] sm:text-[10px] line-clamp-2 mb-8 ${isArabic ? "text-right" : "text-left"}`}>
-                                      {isArabic ? product.cardDescriptionAr : product.cardDescriptionEn}
-                                    </p>
-                                    <button
-                                      className={`${style.addToCartButton} text-[12px] font-semibold sm:text-[12px] flex flex-row-reverse ${isArabic ? "flex-row" : ""} gap-2 items-center justify-center ${product.availableStock <= 0 ? "bg-gray-400 cursor-not-allowed text-center" : ""}`}
-                                      style={product.availableStock <= 0 ? { paddingTop: '1em', justifyContent: 'center', alignItems: 'center', marginTop: '-0.3em' } : {}}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (product.availableStock > 0) {
-                                          addToCart(product.skuId);
-                                        } else {
-                                          toast.error(isArabic ? "المنتج غير متوفر" : "Product Out of Stock", { style: { fontFamily: "Alexandria, sans-serif", fontWeight: 300 } });
-                                        }
-                                      }}
-                                      disabled={product.availableStock <= 0}
-                                    >
-                                      {product.availableStock <= 0 ? (
-                                        <span className="block mb-1 -mt-1">{isArabic ? "غير متوفر" : "Out of Stock"}</span>
-                                      ) : (
-                                        <>
-                                          <img
-                                            src={cart}
-                                            alt="Cart"
-                                            className="inline-block w-5 h-5 sm:w-5 sm:h-5 mr-1 mb-[3px]"
-                                          />
-                                          {isArabic ? "أضف إلى السلة" : "Add to Cart"}
-                                        </>
-                                      )}
-                                    </button>
-                                  </div>
                                 </div>
-                              </div>
-                            ))}
-                          </Carousel>
-                        )}
-                      </div>
+                              ))}
+                            </Carousel>
+                          )}
+                        </div>
+                      </AnimatedSection>
 
                       {/* Show banners after every 2 categories */}
                       {(index + 1) % 2 === 0 && index < visibleCategories.length - 1 && (
-                        <div className="py-5 overflow-hidden">
-                          {(() => {
-                            const categoryBanners = getBannersForCategoryIndex(index);
-
-                            if (categoryBanners.length > 0) {
-                              return renderBannerSlider(categoryBanners);
-                            }
-                            return null;
-                          })()}
-                        </div>
+                        <AnimatedSection>
+                          <div className="py-5 overflow-hidden">
+                            {(() => {
+                              const categoryBanners = getBannersForCategoryIndex(index);
+                              if (categoryBanners.length > 0) {
+                                return renderBannerSlider(categoryBanners);
+                              }
+                              return null;
+                            })()}
+                          </div>
+                        </AnimatedSection>
                       )}
                     </React.Fragment>
                   );
@@ -989,13 +1058,14 @@ export default function RecentProducts() {
                 {/* Show remaining banners after all categories */}
                 {(() => {
                   const bannerGroups = getRemainingBanners();
-                  
                   return (
                     <>
                       {bannerGroups.map((group, index) => (
-                        <div key={index} className="py-1 overflow-hidden">
-                          {renderBannerSlider(group)}
-                        </div>
+                        <AnimatedSection key={index}>
+                          <div className="py-1 overflow-hidden">
+                            {renderBannerSlider(group)}
+                          </div>
+                        </AnimatedSection>
                       ))}
                     </>
                   );
