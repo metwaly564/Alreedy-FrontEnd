@@ -428,39 +428,21 @@ const Account = () => {
     
             {/* Phone Number Section */}
             <div className={`bg-white rounded-lg shadow-sm sm:shadow-md p-4 sm:p-6 ${isArabic ? 'text-right' : ''}`}>
-              <div className={`flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 ${isArabic ? 'flex-row-reverse justify-between' : 'justify-between'}`}>
-                {isArabic ? (
-                  <>
-                    {!phoneEditMode && (
-                      <button
-                        onClick={() => setPhoneEditMode(true)}
-                        className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition text-sm sm:text-base text-center"
-                      >
-                        {userData.phone ? 'تحديث' : 'إضافة'}
-                      </button>
-                    )}
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-0 overflow-y-hidden text-right">رقم الهاتف</h2>
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2 sm:mb-0 overflow-y-hidden">Phone Number</h2>
-                    {!phoneEditMode && (
-                      <button
-                        onClick={() => setPhoneEditMode(true)}
-                        className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition text-sm sm:text-base text-center"
-                      >
-                        {userData.phone ? 'Update' : 'Add'} Phone
-                      </button>
-                    )}
-                  </>
-                )}
-              </div>
-    
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4">{isArabic ? 'رقم الهاتف' : 'Phone Number'}</h2>
+
               {!phoneEditMode ? (
                 <div>
                   <p className={`text-xs sm:text-sm font-medium text-gray-500 ${isArabic ? 'text-right' : ''}`}>Phone Number</p>
                   <div className="w-full">
                     <p className={`text-base sm:text-lg text-gray-800 ${isArabic ? 'text-right' : ''}`}>{userData.phone || 'Not provided'}</p>
+                  </div>
+                  <div className="mt-4">
+                    <button
+                      onClick={() => setPhoneEditMode(true)}
+                      className="w-full sm:w-auto px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition text-sm sm:text-base text-center"
+                    >
+                      {userData.phone ? (isArabic ? 'تحديث' : 'Update') : (isArabic ? 'إضافة' : 'Add')} {isArabic ? '' : 'Phone'}
+                    </button>
                   </div>
                 </div>
               ) : (
