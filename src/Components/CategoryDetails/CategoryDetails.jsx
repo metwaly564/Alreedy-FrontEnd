@@ -291,19 +291,95 @@ export default function CategoryDetails() {
 
         {/* Mobile Overlays */}
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'
-            }`}
+          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           onClick={() => {
             setShowFilters(false);
             setShowSort(false);
           }}
         ></div>
 
+        {/* Sort Sidebar - Mobile Only */}
+        <div
+          className={`fixed md:hidden top-0 ${isArabic ? 'right-0' : 'left-0'} h-screen w-3/4 bg-white z-[70] transform transition-transform duration-300 ease-in-out ${showSort ? 'translate-x-0' : isArabic ? 'translate-x-full' : '-translate-x-full'}`}
+        >
+          <div className="bg-white font-semibold shadow-lg rounded-lg p-4 sticky top-6 h-auto">
+            {/* Mobile Close Button */}
+            <div className="flex justify-between items-center mb-4">
+              <h2 className={`text-lg font-semibold ${isArabic ? 'order-2' : 'order-1'}`}>{isArabic ? 'الترتيب' : 'Sort'}</h2>
+              <button
+                onClick={() => setShowSort(false)}
+                className={`text-gray-500 hover:text-gray-700 ${isArabic ? 'order-1' : 'order-2'}`}
+              >
+                <svg xmlns="https://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Sort Options */}
+            <div className="space-y-2">
+              <button
+                onClick={() => {
+                  handleSort("newest");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "newest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'الأحدث أولاً' : 'Newest first'}
+              </button>
+              <button
+                onClick={() => {
+                  handleSort("oldest");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "oldest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'الأقدم أولاً' : 'Oldest first'}
+              </button>
+              <button
+                onClick={() => {
+                  handleSort("price_asc");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'السعر: من الأقل للأعلى' : 'Price: low to high'}
+              </button>
+              <button
+                onClick={() => {
+                  handleSort("price_desc");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'السعر: من الأعلى للأقل' : 'Price: high to low'}
+              </button>
+              <button
+                onClick={() => {
+                  handleSort("name_asc");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "name_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'الاسم: من أ إلى ي' : 'Name: A to Z'}
+              </button>
+              <button
+                onClick={() => {
+                  handleSort("name_desc");
+                  setShowSort(false);
+                }}
+                className={`w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-3 rounded transition-colors duration-150 ${currentSort === "name_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+              >
+                {isArabic ? 'الاسم: من ي إلى أ' : 'Name: Z to A'}
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className={`flex flex-col ${isArabic ? 'md:flex-row-reverse' : 'md:flex-row'}`}>
           {/* Filters Sidebar */}
           <div
-            className={`fixed md:sticky top-0 ${isArabic ? 'right-0' : 'left-0'} h-screen md:h-[calc(100vh-18vh)] w-3/4 md:w-1/4 lg:w-1/5 bg-white md:bg-transparent z-[70] md:z-20 transform transition-transform duration-300 ease-in-out md:transform-none md:transition-none ${isArabic ? 'md:pl-6' : 'md:pr-6'} overflow-y-auto ${showFilters ? 'translate-x-0' : isArabic ? 'translate-x-full' : '-translate-x-full'
-              } md:translate-x-0`}
+            className={`fixed md:sticky top-0 ${isArabic ? 'right-0' : 'left-0'} h-screen md:h-[calc(100vh-18vh)] w-3/4 md:w-1/4 lg:w-1/5 bg-white md:bg-transparent z-[70] md:z-20 transform transition-transform duration-300 ease-in-out md:transform-none md:transition-none ${isArabic ? 'md:pl-6' : 'md:pr-6'} overflow-y-auto ${showFilters ? 'translate-x-0' : isArabic ? 'translate-x-full' : '-translate-x-full'} md:translate-x-0`}
           >
             <div className="bg-white font-semibold shadow-lg rounded-lg p-4 sticky top-6 md:top-2 h-auto">
               {/* Mobile Close Button */}
@@ -373,8 +449,8 @@ export default function CategoryDetails() {
                 </div>
               </div>
 
-              {/* Sort Options - Now right after Tags */}
-              <div className="mb-4" ref={sortDropdownRef}>
+              {/* Sort Options - Desktop Only */}
+              <div className="mt-6 hidden md:block" ref={sortDropdownRef}>
                 <button
                   className={`w-full flex ${isArabic ? 'flex-row-reverse' : 'flex-row'} justify-between items-center px-2 py-2 bg-gray-100 rounded transition-colors duration-500 hover:bg-gray-200 font-medium`}
                   onClick={() => setShowSort(!showSort)}
@@ -385,8 +461,7 @@ export default function CategoryDetails() {
                   </svg>
                 </button>
                 <div
-                  className={`bg-white border rounded shadow mt-1 transition-all duration-500 ease-in-out overflow-hidden ${showSort ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
-                    }`}
+                  className={`bg-white border rounded shadow mt-1 transition-all duration-500 ease-in-out overflow-hidden ${showSort ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'}`}
                   style={{ minWidth: '100%' }}
                 >
                   <button
@@ -394,8 +469,7 @@ export default function CategoryDetails() {
                       handleSort("newest");
                       setShowSort(false);
                     }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "newest" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "newest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
                   >
                     {isArabic ? 'الأحدث أولاً' : 'Newest first'}
                   </button>
@@ -404,38 +478,34 @@ export default function CategoryDetails() {
                       handleSort("oldest");
                       setShowSort(false);
                     }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "oldest" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "oldest" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
                   >
                     {isArabic ? 'الأقدم أولاً' : 'Oldest first'}
-                  </button>
-                  <button
-                    onClick={() => {
-                      handleSort("price_desc");
-                      setShowSort(false);
-                    }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
-                  >
-                    {isArabic ? 'السعر : من الأعلى للأقل' : 'Decending'}
                   </button>
                   <button
                     onClick={() => {
                       handleSort("price_asc");
                       setShowSort(false);
                     }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
                   >
-                    {isArabic ? 'السعر : من الأقل للأعلى' : 'Accending'}
+                    {isArabic ? 'السعر: من الأقل للأعلى' : 'Price: low to high'}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleSort("price_desc");
+                      setShowSort(false);
+                    }}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "price_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
+                  >
+                    {isArabic ? 'السعر: من الأعلى للأقل' : 'Price: high to low'}
                   </button>
                   <button
                     onClick={() => {
                       handleSort("name_asc");
                       setShowSort(false);
                     }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_asc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
                   >
                     {isArabic ? 'الاسم: من أ إلى ي' : 'Name: A to Z'}
                   </button>
@@ -444,8 +514,7 @@ export default function CategoryDetails() {
                       handleSort("name_desc");
                       setShowSort(false);
                     }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
+                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-1.5 rounded transition-colors duration-150 font-medium text-[13px] ${currentSort === "name_desc" ? "bg-red-500 text-white" : "hover:bg-gray-50"}`}
                   >
                     {isArabic ? 'الاسم: من ي إلى أ' : 'Name: Z to A'}
                   </button>
