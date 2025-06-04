@@ -948,7 +948,7 @@ const Cart = () => {
                   required
                 >
                   <option className={`font-semibold ${isArabic ? "text-right" : "text-left"}`} value="">{isArabic ? "اختر المنطقة" : "Select Zone"}</option>
-                  {zones.map((zone) => (
+                  {zones.filter(zone => !zone.isDeleted).map((zone) => (
                     <option className={`font-semibold ${isArabic ? "text-right" : "text-left"}`} key={zone.id} value={zone.id}>
                       {zone.name}
                     </option>
