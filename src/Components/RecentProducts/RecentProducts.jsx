@@ -186,8 +186,8 @@ export default function RecentProducts() {
           return rankA - rankB;
         });
 
-      console.log('Sorted fixed banners:', fixedBanners.map(b => ({ id: b.id, rank: b.rank })));
-      console.log('Sorted middle banners:', middleBanners.map(b => ({ id: b.id, rank: b.rank })));
+      // console.log('Sorted fixed banners:', fixedBanners.map(b => ({ id: b.id, rank: b.rank }))); 
+      // console.log('Sorted middle banners:', middleBanners.map(b => ({ id: b.id, rank: b.rank })));
 
       // Set fixed banners as before
       setCategories(categoriesWithProducts);

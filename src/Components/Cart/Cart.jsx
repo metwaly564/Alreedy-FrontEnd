@@ -1433,8 +1433,8 @@ const Cart = () => {
                     {renderStepContent()}
                   </>
                 ) : (
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-right text-sm font-medium mb-2">
+                  <div className={`p-4 bg-gray-50 rounded-lg ${isArabic ? "text-right" : "text-left"}`}>
+                    <h3 className={`text-sm font-medium mb-2 ${isArabic ? "text-right" : "text-left"}`}>
                       {isArabic ? "سجل الدخول لإتمام الطلب" : "Login to complete the order"}
                     </h3>
                     <button
@@ -1467,7 +1467,7 @@ const Cart = () => {
                     </>
                   ) : (
                     <div className="p-4 bg-gray-50 rounded-lg">
-                      <h3 className="text-right text-sm font-medium mb-2">
+                      <h3 className={`text-sm font-medium mb-2 ${isArabic ? "text-right" : "text-left"}`}>
                         {isArabic ? "سجل الدخول لإتمام الطلب" : "Login to complete the order"}
                       </h3>
                       <button

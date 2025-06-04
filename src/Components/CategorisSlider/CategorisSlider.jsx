@@ -50,7 +50,7 @@ export default function CategorisSlider() {
           displayBanners = orderedBanners;
         }
 
-        console.log('Mobile banners:', displayBanners.map(b => ({ rank: b.rank })));
+        // console.log('Mobile banners:', displayBanners.map(b => ({ rank: b.rank })));
         setBanners(displayBanners);
         setLoading(false);
       } catch (err) {

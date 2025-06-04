@@ -636,7 +636,7 @@ export default function Navbar() {
               {/* Cart icon */}
               <div className="relative">
                 <NavLink to="/cart" className="transition-transform block">
-                  <FiShoppingCart className={`text-red-700 text-lg ${isLoggedIn ? 'mt-2' : ''}`} />
+                  <FiShoppingCart className="text-red-700 text-lg mt-2" />
                   <span className={`relative -top-[24px] ml-[8px] mb-[-10px] bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold z-[7] ${cartCount > 0 ? 'opacity-90' : 'opacity-0'}`}>{cartCount}</span>
                 </NavLink>
               </div>
