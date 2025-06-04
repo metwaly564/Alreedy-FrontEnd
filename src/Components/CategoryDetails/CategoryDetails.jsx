@@ -398,7 +398,9 @@ export default function CategoryDetails() {
               {/* Category Header */}
               <div className="">
                 {isLoading ? (
-                  <div className="text-center">Loading category...</div>
+                  <div className="flex justify-center items-center h-32">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+                  </div>
                 ) : category ? (
                   <h1 className="text-xl font-bold text-gray-800 text-center">
                   </h1>
