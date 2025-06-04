@@ -22,7 +22,7 @@ const OperationTeamDashboard = () => {
   });
   const [statusUpdateConfirm, setStatusUpdateConfirm] = useState(null);
   const [selectedDeliveryBoy, setSelectedDeliveryBoy] = useState(null);
-  
+
   const ITEMS_PER_PAGE = 10;
 
   // Get token from localStorage
@@ -63,24 +63,24 @@ const OperationTeamDashboard = () => {
 
   // Filter and sort orders
   const sortedAndFilteredOrders = useMemo(() => {
-    let sortableOrders = [...orders].filter(order => 
+    let sortableOrders = [...orders].filter(order =>
       order.status !== 'canceled' && order.status !== 'delivered'
     );
-    
+
     if (searchTerm) {
-      sortableOrders = sortableOrders.filter(order => 
+      sortableOrders = sortableOrders.filter(order =>
         order.id.toString().includes(searchTerm) ||
         (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (order.mainPhone && order.mainPhone.includes(searchTerm)) ||
         (order.status && order.status.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
-    
+
     if (sortConfig.key) {
       sortableOrders.sort((a, b) => {
         const aValue = a[sortConfig.key] || '';
         const bValue = b[sortConfig.key] || '';
-        
+
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -90,7 +90,7 @@ const OperationTeamDashboard = () => {
         return 0;
       });
     }
-    
+
     return sortableOrders;
   }, [orders, sortConfig, searchTerm]);
 
@@ -143,7 +143,7 @@ const OperationTeamDashboard = () => {
       try {
         setLoading(true);
         const headers = getHeaders();
-        
+
         // Fetch cities
         const citiesResponse = await fetch("https://reedyph.com/api/v1/places/city", { headers });
         if (!citiesResponse.ok) throw new Error('Failed to fetch cities');
@@ -167,12 +167,12 @@ const OperationTeamDashboard = () => {
 
         // Fetch orders
         const ordersResponse = await fetch(
-          "https://reedyph.com/api/v1/orders?status=pending&status=ready&sort=date_asc&page=1&limit=100", 
+          "https://reedyph.com/api/v1/orders?status=pending&status=ready&sort=date_asc&page=1&limit=100",
           { headers }
         );
         if (!ordersResponse.ok) throw new Error('Failed to fetch orders');
         const ordersData = await ordersResponse.json();
-        
+
         // Use Map to ensure unique orders when setting initial orders
         const uniqueOrders = new Map(ordersData.orders.map(order => [order.id, order]));
         setOrders(Array.from(uniqueOrders.values()));
@@ -225,7 +225,7 @@ const OperationTeamDashboard = () => {
         setOrders(prev => prev.filter(order => order.id !== orderId));
       } else {
         // Update status for other orders
-        setOrders(prev => prev.map(order => 
+        setOrders(prev => prev.map(order =>
           order.id === orderId ? { ...order, status } : order
         ));
       }
@@ -277,207 +277,204 @@ const OperationTeamDashboard = () => {
 
   return (
     <>
-    <div className='flex flex-col justify-center p-4 text-sm font-alexandria font-light'>
-      <ToastContainer position="top-right" autoClose={5000} />
-      
-      <h1 className="text-xl font-bold mb-4">Operation Team Dashboard</h1>
-      
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
-        <div className="flex-grow md:max-w-md">
-          <input
-            type="text"
-            placeholder="Search orders..."
-            className="w-full p-1 border rounded text-sm"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(0);
-            }}
-          />
-        </div>
-      </div>
-      
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="bg-gray-100">
-              <th 
-                className="p-2 text-left cursor-pointer hover:bg-gray-200"
-                onClick={() => requestSort('id')}
-              >
-                Order ID {sortConfig.key === 'id' && (
-                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
-                  onClick={() => requestSort('customerName')}>
-                Customer {sortConfig.key === 'customerName' && (
-                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th className="p-2 text-left">Phone</th>
-              <th className="p-2 text-left w-[20%]">Address</th>
-              <th className="p-2 text-left">Items</th>
-              <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
-                  onClick={() => requestSort('totalAmount')}>
-                Total {sortConfig.key === 'totalAmount' && (
-                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
-                  onClick={() => requestSort('deliveryFees')}>
-                Delivery Fees {sortConfig.key === 'deliveryFees' && (
-                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th className="p-2 text-left">Payment Method</th>
-              <th className="p-2 text-left">Payment Status</th>
-              <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
-                  onClick={() => requestSort('status')}>
-                Order Status {sortConfig.key === 'status' && (
-                  <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
-                )}
-              </th>
-              <th className="p-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentOrders.length > 0 ? (
-              currentOrders.map((order) => {
-                const cityName = citiesMap[order.cityId] || 'Unknown';
-                const zoneName = zonesMap[order.zoneId] || 'Unknown';
-                const address = `${order.address}, ${zoneName}, ${cityName}`;
+      <div className='flex flex-col justify-center p-4 text-sm font-alexandria font-light'>
+        <ToastContainer position="top-right" autoClose={5000} />
 
-                const itemsSummary = order.orderItems?.map(item => 
-                  `- ${productsMap[item.productId] || item.productId} x ${item.quantity}`
-                ).join('\n') || 'No items';
+        <h1 className="text-xl font-bold mb-4">Operation Team Dashboard</h1>
 
-                return (
-                  <tr key={order.id} className="border-t hover:bg-gray-50">
-                    <td className="p-2">{order.id || 'N/A'}</td>
-                    <td className="p-2">{order.customerName || 'N/A'}</td>
-                    <td className="p-2">{order.mainPhone || 'N/A'}</td>
-                    <td className="p-2">{address}</td>
-                    <td className="p-2 whitespace-pre-line max-w-xs truncate hover:whitespace-normal hover:max-w-none">
-                      {itemsSummary}
-                    </td>
-                    <td className="p-2">{order.totalAmount?.toFixed(2) || '0.00'}EGP</td>
-                    <td className="p-2">{order.deliveryFees?.toFixed(2) || '0.00'}EGP</td>
-                    <td className="p-2">{order.paymentMethod || 'N/A'}</td>
-                    <td className="p-2">
-                      <span className={`px-1 py-0.5 rounded-full text-xs ${order.paymentStatus === 'paid' ? 'bg-red-100 text-red-800' : 'bg-red-100 text-red-800'}`}>
-                        {order.paymentStatus || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="p-2">
-                      <span className={`px-1 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
-                        {order.status || 'N/A'}
-                      </span>
-                    </td>
-                    <td className="p-2 space-y-1 min-w-[120px]">
-                      <button
-                        onClick={() => handleStatusUpdateClick(order.id, 'viewed')}
-                        className="w-full p-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs"
-                      >
-                        Viewed
-                      </button>
-                      <button
-                        onClick={() => handleStatusUpdateClick(order.id, 'ready')}
-                        className="w-full p-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs"
-                      >
-                        Ready
-                      </button>
-                      <button
-                        onClick={() => handleStatusUpdateClick(order.id, 'delivered')}
-                        className="w-full p-1 bg-purple-500 hover:bg-purple-600 text-white rounded text-xs"
-                      >
-                        Delivered
-                      </button>
-                      <button
-                        onClick={() => handleStatusUpdateClick(order.id, 'canceled')}
-                        className="w-full p-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs"
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="11" className="p-2 text-center text-gray-500">
-                  No orders found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {sortedAndFilteredOrders.length > ITEMS_PER_PAGE && (
-        <div className="flex justify-center mt-2">
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            breakLabel={'...'}
-            pageCount={pageCount}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageClick}
-            containerClassName={'flex items-center space-x-1 text-sm'}
-            pageClassName={'px-2 py-0.5 border rounded text-sm text-black'}
-            pageLinkClassName={'text-black'}
-            activeClassName={'bg-blue-600 text-white'}
-            previousClassName={'px-2 py-0.5 border rounded text-sm'}
-            nextClassName={'px-2 py-0.5 border rounded text-sm'}
-            disabledClassName={'opacity-50 cursor-not-allowed'}
-            forcePage={currentPage}
-          />
-        </div>
-      )}
-
-      {/* Delivery Boy Selection Modal for Ready Status */}
-      {statusUpdateConfirm?.status === 'ready' && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white p-4 rounded-lg shadow-xl max-w-md w-full text-sm">
-            <h3 className="text-md font-semibold mb-2">Select Delivery Boy for Order #{statusUpdateConfirm.orderId}</h3>
-            <select
-              className="w-full p-2 border rounded mb-4"
-              value={selectedDeliveryBoy || ''}
-              onChange={(e) => setSelectedDeliveryBoy(Number(e.target.value))}
-            >
-              <option value="">Select Delivery Boy</option>
-              {deliveryBoys.map(boy => (
-                <option key={boy.id} value={boy.id}>
-                  {boy.name} ({boy.phone})
-                </option>
-              ))}
-            </select>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => {
-                  setStatusUpdateConfirm(null);
-                  setSelectedDeliveryBoy(null);
-                }}
-                className="px-3 py-1 border rounded hover:bg-gray-100 text-sm" 
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => updateOrderStatus(statusUpdateConfirm.orderId, 'ready')}
-                disabled={!selectedDeliveryBoy}
-                className={`px-3 py-1 text-white rounded hover:opacity-90 text-sm ${
-                  !selectedDeliveryBoy ? 'bg-gray-400' : 'bg-red-600'
-                }`}
-              >
-                Confirm
-              </button>
-            </div>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 mb-2">
+          <div className="flex-grow md:max-w-md">
+            <input
+              type="text"
+              placeholder="Search orders..."
+              className="w-full p-1 border rounded text-sm"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(0);
+              }}
+            />
           </div>
         </div>
-      )}
-    </div>
-    
+
+        <div className="overflow-x-auto bg-white rounded-lg shadow">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th
+                  className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('id')}
+                >
+                  Order ID {sortConfig.key === 'id' && (
+                    <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                  )}
+                </th>
+                <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('customerName')}>
+                  Customer {sortConfig.key === 'customerName' && (
+                    <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                  )}
+                </th>
+                <th className="p-2 text-left">Phone</th>
+                <th className="p-2 text-left w-[20%]">Address</th>
+                <th className="p-2 text-left">Items</th>
+                <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('totalAmount')}>
+                  Total {sortConfig.key === 'totalAmount' && (
+                    <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                  )}
+                </th>
+                <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('deliveryFee')}>
+                  Delivery Fee {sortConfig.key === 'deliveryFee' && (
+                    <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                  )}
+                </th>
+                <th className="p-2 text-left">Payment Method</th>
+                <th className="p-2 text-left">Payment Status</th>
+                <th className="p-2 text-left cursor-pointer hover:bg-gray-200"
+                  onClick={() => requestSort('status')}>
+                  Order Status {sortConfig.key === 'status' && (
+                    <span>{sortConfig.direction === 'ascending' ? '↑' : '↓'}</span>
+                  )}
+                </th>
+                <th className="p-2 text-left">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentOrders.length > 0 ? (
+                currentOrders.map((order) => {
+                  const cityName = citiesMap[order.cityId] || 'Unknown';
+                  const zoneName = zonesMap[order.zoneId] || 'Unknown';
+                  const address = `${order.address}, ${zoneName}, ${cityName}`;
+
+                  const itemsSummary = order.orderItems?.map(item =>
+                    `- ${productsMap[item.productId] || item.productId} x ${item.quantity}`
+                  ).join('\n') || 'No items';
+
+                  return (
+                    <tr key={order.id} className="border-t hover:bg-gray-50">
+                      <td className="p-2">{order.id || 'N/A'}</td>
+                      <td className="p-2">{order.customerName || 'N/A'}</td>
+                      <td className="p-2">{order.mainPhone || 'N/A'}</td>
+                      <td className="p-2">{address}</td>
+                      <td className="p-2 whitespace-pre-line max-w-xs truncate hover:whitespace-normal hover:max-w-none">
+                        {itemsSummary}
+                      </td>
+                      <td className="p-2">{order.totalAmount?.toFixed(2) || '0.00'}EGP</td>
+                      <td className="p-2">{order.deliveryFee?.toFixed(2) || '0.00'}EGP</td>                      <td className="p-2">
+                        <span className={`px-1 py-0.5 rounded-full text-xs ${order.paymentStatus === 'paid' ? 'bg-red-100 text-red-800' : 'bg-red-100 text-red-800'}`}>
+                          {order.paymentStatus || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="p-2">
+                        <span className={`px-1 py-0.5 rounded-full text-xs ${getStatusColor(order.status)}`}>
+                          {order.status || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="p-2 space-y-1 min-w-[120px]">
+                        <button
+                          onClick={() => handleStatusUpdateClick(order.id, 'viewed')}
+                          className="w-full p-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs"
+                        >
+                          Viewed
+                        </button>
+                        <button
+                          onClick={() => handleStatusUpdateClick(order.id, 'ready')}
+                          className="w-full p-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs"
+                        >
+                          Ready
+                        </button>
+                        <button
+                          onClick={() => handleStatusUpdateClick(order.id, 'delivered')}
+                          className="w-full p-1 bg-purple-500 hover:bg-purple-600 text-white rounded text-xs"
+                        >
+                          Delivered
+                        </button>
+                        <button
+                          onClick={() => handleStatusUpdateClick(order.id, 'canceled')}
+                          className="w-full p-1 bg-red-500 hover:bg-red-600 text-white rounded text-xs"
+                        >
+                          Cancel
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="11" className="p-2 text-center text-gray-500">
+                    No orders found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {sortedAndFilteredOrders.length > ITEMS_PER_PAGE && (
+          <div className="flex justify-center mt-2">
+            <ReactPaginate
+              previousLabel={'Previous'}
+              nextLabel={'Next'}
+              breakLabel={'...'}
+              pageCount={pageCount}
+              marginPagesDisplayed={2}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageClick}
+              containerClassName={'flex items-center space-x-1 text-sm'}
+              pageClassName={'px-2 py-0.5 border rounded text-sm text-black'}
+              pageLinkClassName={'text-black'}
+              activeClassName={'bg-blue-600 text-white'}
+              previousClassName={'px-2 py-0.5 border rounded text-sm'}
+              nextClassName={'px-2 py-0.5 border rounded text-sm'}
+              disabledClassName={'opacity-50 cursor-not-allowed'}
+              forcePage={currentPage}
+            />
+          </div>
+        )}
+
+        {/* Delivery Boy Selection Modal for Ready Status */}
+        {statusUpdateConfirm?.status === 'ready' && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white p-4 rounded-lg shadow-xl max-w-md w-full text-sm">
+              <h3 className="text-md font-semibold mb-2">Select Delivery Boy for Order #{statusUpdateConfirm.orderId}</h3>
+              <select
+                className="w-full p-2 border rounded mb-4"
+                value={selectedDeliveryBoy || ''}
+                onChange={(e) => setSelectedDeliveryBoy(Number(e.target.value))}
+              >
+                <option value="">Select Delivery Boy</option>
+                {deliveryBoys.map(boy => (
+                  <option key={boy.id} value={boy.id}>
+                    {boy.name} ({boy.phone})
+                  </option>
+                ))}
+              </select>
+              <div className="flex justify-end space-x-2">
+                <button
+                  onClick={() => {
+                    setStatusUpdateConfirm(null);
+                    setSelectedDeliveryBoy(null);
+                  }}
+                  className="px-3 py-1 border rounded hover:bg-gray-100 text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => updateOrderStatus(statusUpdateConfirm.orderId, 'ready')}
+                  disabled={!selectedDeliveryBoy}
+                  className={`px-3 py-1 text-white rounded hover:opacity-90 text-sm ${!selectedDeliveryBoy ? 'bg-gray-400' : 'bg-red-600'
+                    }`}
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
     </>
   );
 };
