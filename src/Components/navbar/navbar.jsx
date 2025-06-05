@@ -698,27 +698,55 @@ export default function Navbar() {
               </button>
             </div>
 
-            <button
-              className={`flex-1 py-3 text-center font-medium ${
-                activeTab === "categories"
-                  ? "text-gray-800 border-b-2 border-red-500"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab("categories")}
-            >
-              {isArabic ? "الفئات" : "CATEGORIES"}
-            </button>
+            {isArabic ? (
+              <>
+                <button
+                  className={`flex-1 py-3 text-center font-medium ${
+                    activeTab === "categories"
+                      ? "text-gray-800 border-b-2 border-red-500"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("categories")}
+                >
+                  {isArabic ? "الفئات" : "CATEGORIES"}
+                </button>
 
-            <button
-              className={`flex-1 py-3 text-center font-medium ${
-                activeTab === "menu"
-                  ? "text-gray-800 border-b-2 border-red-500"
-                  : "text-gray-500"
-              }`}
-              onClick={() => setActiveTab("menu")}
-            >
-              {isArabic ? "القائمة" : "MENU"}
-            </button>
+                <button
+                  className={`flex-1 py-3 text-center font-medium ${
+                    activeTab === "menu"
+                      ? "text-gray-800 border-b-2 border-red-500"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("menu")}
+                >
+                  {isArabic ? "القائمة" : "MENU"}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={`flex-1 py-3 text-center font-medium ${
+                    activeTab === "menu"
+                      ? "text-gray-800 border-b-2 border-red-500"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("menu")}
+                >
+                  MENU
+                </button>
+
+                <button
+                  className={`flex-1 py-3 text-center font-medium ${
+                    activeTab === "categories"
+                      ? "text-gray-800 border-b-2 border-red-500"
+                      : "text-gray-500"
+                  }`}
+                  onClick={() => setActiveTab("categories")}
+                >
+                  CATEGORIES
+                </button>
+              </>
+            )}
           </div>
 
           {/* Scrollable content area */}
