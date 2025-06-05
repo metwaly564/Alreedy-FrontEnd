@@ -7,6 +7,7 @@ import { UserContext } from '../../Context/UserContext';
 import toast from "react-hot-toast";
 import logo from "../../assets/Alreedy.png";
 
+
 export default function Register() {
   const { TempPhone, setTempPhone, isArabic, setuserlogin } = useContext(UserContext);
   const navigate = useNavigate();

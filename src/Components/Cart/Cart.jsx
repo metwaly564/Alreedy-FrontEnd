@@ -508,24 +508,38 @@ const Cart = () => {
 
   // Checkout actions
   const handleExtraPhoneChange = (index, value) => {
-    const newExtraPhones = [...extraPhones];
-    newExtraPhones[index] = value;
-    setExtraPhones(newExtraPhones);
+    // Allow typing any number, but limit to 11 digits
+    if (value === '' || /^[0-9]{0,11}$/.test(value)) {
+      const newExtraPhones = [...extraPhones];
+      newExtraPhones[index] = value;
+      setExtraPhones(newExtraPhones);
+    }
+  };
+
+  const handleMainPhoneChange = (value) => {
+    // Allow typing any number, but limit to 11 digits
+    if (value === '' || /^[0-9]{0,11}$/.test(value)) {
+      setCheckoutForm({...checkoutForm, phone: value});
+    }
   };
 
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
-  
-    // Validate inputs
-    if (!paymentType) {
-      toast.error(isArabic ? "اختر طريقة الدفع" : "Select Payment Method");
+    
+    // Validate main phone number
+    const phoneRegex = /^01[0125][0-9]{8}$/;
+    if (!phoneRegex.test(checkoutForm.phone)) {
+      toast.error(isArabic ? "يرجى إدخال رقم هاتف مصري صحيح" : "Please enter a valid Egyptian phone number");
       return;
     }
-    if (paymentType === "online" && !selectedOnlinePayment) {
-      toast.error(isArabic ? "اختر خيار الدفع" : "Select Payment Option");
+
+    // Validate extra phones if any
+    const invalidExtraPhone = extraPhones.find(phone => phone && !phoneRegex.test(phone));
+    if (invalidExtraPhone) {
+      toast.error(isArabic ? "يرجى إدخال رقم هاتف مصري صحيح للأرقام الإضافية" : "Please enter valid Egyptian phone numbers for extra phones");
       return;
     }
-  
+
     // Prepare order data
     const orderData = {
       cityId: parseInt(selectedCity),
@@ -910,6 +924,24 @@ const Cart = () => {
     </div>
   );
 
+  // Add this function near the other validation functions
+  const isPhoneValid = (phone) => {
+    const phoneRegex = /^01[0125][0-9]{8}$/;
+    return phone && phone.length === 11 && phoneRegex.test(phone);
+  };
+
+  const isAllPhonesValid = () => {
+    // Check main phone
+    if (!checkoutForm.phone || checkoutForm.phone.length < 11) {
+      return false;
+    }
+    if (!isPhoneValid(checkoutForm.phone)) {
+      return false;
+    }
+    // Check extra phones if they have any value
+    return extraPhones.every(phone => !phone || (phone.length === 11 && isPhoneValid(phone)));
+  };
+
   const renderStepContent = () => {
     switch (activeStep) {
       case 1:
@@ -918,7 +950,7 @@ const Cart = () => {
             <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
               {isArabic ? "مكان التوصيل" : "Delivery Location "}
             </h2>
-           
+            
             <div>
               <label className={`block font-semibold  text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                 {isArabic ? "المدينة" : "City"}
@@ -935,7 +967,7 @@ const Cart = () => {
                 ))}
               </select>
             </div>
-           
+
             {selectedCity && (
               <div>
                 <label className={`block font-semibold  text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
@@ -956,7 +988,7 @@ const Cart = () => {
                 </select>
               </div>
             )}
-           
+            
             <div className="mt-4">
               <h3 className={`text-[10px] font-medium ${isArabic ? "text-right" : "text-left"} mb-2`}>
                 {isArabic ? "هل لديك كود خصم؟" : "Have a promo code?"}
@@ -997,11 +1029,16 @@ const Cart = () => {
                 )}
               </div>
             </div>
-           
+
             <button
-              onClick={() => setActiveStep(2)}
-              disabled={!selectedCity || !selectedZone}
-              className="w-full bg-red-600 text-white py-2 rounded text-sm font-light   hover:bg-red-700 disabled:bg-gray-400"
+              onClick={() => {
+                if (!selectedCity || !selectedZone) {
+                  toast.error(isArabic ? "يرجى اختيار المدينة والمنطقة" : "Please select city and zone");
+                  return;
+                }
+                setActiveStep(2);
+              }}
+              className="w-full bg-red-600 text-white py-2 rounded text-sm font-light hover:bg-red-700 disabled:bg-gray-400"
             >
               {isArabic ? "استمرار" : "Continue"}
             </button>
@@ -1009,69 +1046,112 @@ const Cart = () => {
         );
       case 2:
         return (
-          <div className={`space-y-4 ${isArabic ? "text-right items-end" : "text-left items-start"}`}>
+          <div className="space-y-4">
             <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
-              {isArabic ? "المعلومات الشخصية" : "Personal Information"}
+              {isArabic ? "معلومات التوصيل" : "Delivery Information"}
             </h2>
-           
-            <div>
-              <label className={`block text-[15px] font-medium text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                {isArabic ? "الاسم الاول" : "First Name"}
-              </label>
-              <input
-                type="text"
-                name="firstname"
-                value={checkoutForm.firstname}
-                onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
-                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {isArabic ? (
+                <>
+                  <div>
+                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                      {isArabic ? "الاسم الأخير" : "Last Name"}
+                    </label>
+                    <input
+                      type="text"
+                      name="lastname"
+                      value={checkoutForm.lastname}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
+                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                      {isArabic ? "الاسم الأول" : "First Name"}
+                    </label>
+                    <input
+                      type="text"
+                      name="firstname"
+                      value={checkoutForm.firstname}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
+                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                      required
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                      {isArabic ? "الاسم الأول" : "First Name"}
+                    </label>
+                    <input
+                      type="text"
+                      name="firstname"
+                      value={checkoutForm.firstname}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
+                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                      {isArabic ? "الاسم الأخير" : "Last Name"}
+                    </label>
+                    <input
+                      type="text"
+                      name="lastname"
+                      value={checkoutForm.lastname}
+                      onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
+                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                      required
+                    />
+                  </div>
+                </>
+              )}
             </div>
-           
+
             <div>
-              <label className={`block text-[15px] font-medium text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                {isArabic ? "الاسم الاخير" : "Last Name"}
-              </label>
-              <input
-                type="text"
-                name="lastname"
-                value={checkoutForm.lastname}
-                onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
-                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
-                required
-              />
-            </div>
-           
-            <div>
-              <label className={`block text-[15px] font-medium text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+              <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                 {isArabic ? "الهاتف" : "Phone"}
               </label>
               <input
                 type="tel"
                 name="phone"
                 value={checkoutForm.phone}
-                onChange={(e) => setCheckoutForm({...checkoutForm, phone: e.target.value})}
-                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                onChange={(e) => handleMainPhoneChange(e.target.value)}
+                className={`w-full border ${checkoutForm.phone && checkoutForm.phone.length === 11 && !/^01[0125][0-9]{8}$/.test(checkoutForm.phone) ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
                 required
               />
+              {checkoutForm.phone && checkoutForm.phone.length === 11 && !/^01[0125][0-9]{8}$/.test(checkoutForm.phone) && (
+                <p className={`text-red-500 text-xs mt-1 ${isArabic ? "text-right" : "text-left"}`}>
+                  {isArabic ? "يرجى إدخال رقم هاتف مصري صحيح" : "Please enter a valid Egyptian phone number"}
+                </p>
+              )}
             </div>
            
             {extraPhones.map((phone, index) => (
               <div key={index}>
-                <label className={`block text-[15px] font-medium text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                   {isArabic ? `هاتف إضافي ${index + 1}` : `Extra Phone ${index + 1}`}
                 </label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => handleExtraPhoneChange(index, e.target.value)}
-                  className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
+                  className={`w-full border ${phone && phone.length === 11 && !/^01[0125][0-9]{8}$/.test(phone) ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
                 />
+                {phone && phone.length === 11 && !/^01[0125][0-9]{8}$/.test(phone) && (
+                  <p className={`text-red-500 text-xs mt-1 ${isArabic ? "text-right" : "text-left"}`}>
+                    {isArabic ? "يرجى إدخال رقم هاتف مصري صحيح" : "Please enter a valid Egyptian phone number"}
+                  </p>
+                )}
               </div>
             ))}
-           
+
             <div>
-              <label className={`block text-[15px] font-medium text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+              <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
                 {isArabic ? "العنوان" : "Address"}
               </label>
               <input
@@ -1079,11 +1159,11 @@ const Cart = () => {
                 name="address"
                 value={checkoutForm.address}
                 onChange={(e) => setCheckoutForm({...checkoutForm, address: e.target.value})}
-                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
+                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
                 required
               />
             </div>
-           
+
             <div className="flex gap-3">
               <button
                 type="button"
@@ -1093,9 +1173,21 @@ const Cart = () => {
                 {isArabic ? "رجوع" : "Back"}
               </button>
               <button
-                type="button"
-                onClick={() => setActiveStep(3)}
-                disabled={!checkoutForm.firstname || !checkoutForm.lastname || !checkoutForm.phone || !checkoutForm.address}
+                onClick={() => {
+                  if (!checkoutForm.phone || checkoutForm.phone.length < 11) {
+                    toast.error(isArabic ? "يرجى إدخال رقم هاتف مكون من 11 رقم" : "Please enter an 11-digit phone number");
+                    return;
+                  }
+                  if (!isAllPhonesValid()) {
+                    toast.error(isArabic ? "يرجى إدخال رقم هاتف صحيح" : "Please enter a valid phone number");
+                    return;
+                  }
+                  if (!checkoutForm.address) {
+                    toast.error(isArabic ? "يرجى إدخال العنوان" : "Please enter your address");
+                    return;
+                  }
+                  setActiveStep(3);
+                }}
                 className="w-1/2 bg-red-600 text-white py-2 rounded text-sm font-bold hover:bg-red-700 disabled:bg-gray-400"
               >
                 {isArabic ? "استمرار" : "Continue"}
