@@ -1050,66 +1050,31 @@ const Cart = () => {
             <h2 className={`text-[20px] font-extrabold mb-3 ${isArabic ? "text-right" : "text-left"}`}>
               {isArabic ? "معلومات التوصيل" : "Delivery Information"}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {isArabic ? (
-                <>
-                  <div>
-                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                      {isArabic ? "الاسم الأخير" : "Last Name"}
-                    </label>
-                    <input
-                      type="text"
-                      name="lastname"
-                      value={checkoutForm.lastname}
-                      onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
-                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                      {isArabic ? "الاسم الأول" : "First Name"}
-                    </label>
-                    <input
-                      type="text"
-                      name="firstname"
-                      value={checkoutForm.firstname}
-                      onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
-                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
-                      required
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div>
-                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                      {isArabic ? "الاسم الأول" : "First Name"}
-                    </label>
-                    <input
-                      type="text"
-                      name="firstname"
-                      value={checkoutForm.firstname}
-                      onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
-                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                      {isArabic ? "الاسم الأخير" : "Last Name"}
-                    </label>
-                    <input
-                      type="text"
-                      name="lastname"
-                      value={checkoutForm.lastname}
-                      onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
-                      className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
-                      required
-                    />
-                  </div>
-                </>
-              )}
+            <div>
+              <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                {isArabic ? "الاسم الأول" : "First Name"}
+              </label>
+              <input
+                type="text"
+                name="firstname"
+                value={checkoutForm.firstname}
+                onChange={(e) => setCheckoutForm({...checkoutForm, firstname: e.target.value})}
+                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                required
+              />
+            </div>
+            <div>
+              <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
+                {isArabic ? "الاسم الأخير" : "Last Name"}
+              </label>
+              <input
+                type="text"
+                name="lastname"
+                value={checkoutForm.lastname}
+                onChange={(e) => setCheckoutForm({...checkoutForm, lastname: e.target.value})}
+                className={`w-full border border-gray-300 rounded px-3 py-2 text-sm font-alexandria ${isArabic ? "text-right" : "text-left"}`}
+                required
+              />
             </div>
 
             <div>
