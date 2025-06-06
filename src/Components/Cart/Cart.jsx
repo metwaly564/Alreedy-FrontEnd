@@ -1174,6 +1174,18 @@ const Cart = () => {
               </button>
               <button
                 onClick={() => {
+                  const nameRegex = /^[a-zA-Z\u0600-\u06FF\s]+$/;
+                  
+                  if (!checkoutForm.firstname || !nameRegex.test(checkoutForm.firstname)) {
+                    toast.error(isArabic ? "يرجى إدخال الاسم الأول بشكل صحيح (أحرف فقط)" : "Please enter a valid first name (letters only)");
+                    return;
+                  }
+                  
+                  if (!checkoutForm.lastname || !nameRegex.test(checkoutForm.lastname)) {
+                    toast.error(isArabic ? "يرجى إدخال الاسم الأخير بشكل صحيح (أحرف فقط)" : "Please enter a valid last name (letters only)");
+                    return;
+                  }
+
                   if (!checkoutForm.phone || checkoutForm.phone.length < 11) {
                     toast.error(isArabic ? "يرجى إدخال رقم هاتف مكون من 11 رقم" : "Please enter an 11-digit phone number");
                     return;
@@ -1182,8 +1194,8 @@ const Cart = () => {
                     toast.error(isArabic ? "يرجى إدخال رقم هاتف صحيح" : "Please enter a valid phone number");
                     return;
                   }
-                  if (!checkoutForm.address) {
-                    toast.error(isArabic ? "يرجى إدخال العنوان" : "Please enter your address");
+                  if (!checkoutForm.address || checkoutForm.address.length < 8) {
+                    toast.error(isArabic ? "يرجى إدخال عنوان صحيح (8 أحرف على الأقل)" : "Please enter a valid address (minimum 8 characters)");
                     return;
                   }
                   setActiveStep(3);
