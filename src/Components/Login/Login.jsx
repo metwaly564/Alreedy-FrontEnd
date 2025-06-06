@@ -65,6 +65,7 @@ export default function Login() {
         );
 
         localStorage.setItem("userToken", response.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
         setuserlogin(response.data.accessToken);
 
         // Transfer cart items
