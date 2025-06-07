@@ -1458,7 +1458,7 @@ const Cart = () => {
                   </div>
                 </div>
                 <div className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden">
-                  <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
+                  <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"} ${isArabic ? "direction: rtl" : ""}`} style={{ direction: isArabic ? "rtl" : "ltr" }}>
                     {isArabic ? product.nameAr : product.nameEn}
                   </h3>
                   <p className={`text-gray-500 font-sans text-[11px] sm:text-[13px] mb-0.5 sm:mb-1 ${isArabic ? "text-right" : "text-left"}`}>
