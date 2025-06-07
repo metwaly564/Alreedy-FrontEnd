@@ -23,6 +23,7 @@ const Cart = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [promoCodeDetails, setPromoCodeDetails] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Add this line for order submission loading state
 
   // Checkout state
   const [activeStep, setActiveStep] = useState(1);
@@ -526,10 +527,14 @@ const Cart = () => {
   const handleSubmitOrder = async (e) => {
     e.preventDefault();
     
+    // Set submitting state to true
+    setIsSubmitting(true);
+    
     // Validate main phone number
     const phoneRegex = /^01[0125][0-9]{8}$/;
     if (!phoneRegex.test(checkoutForm.phone)) {
       toast.error(isArabic ? "يرجى إدخال رقم هاتف مصري صحيح" : "Please enter a valid Egyptian phone number");
+      setIsSubmitting(false);
       return;
     }
 
@@ -537,6 +542,7 @@ const Cart = () => {
     const invalidExtraPhone = extraPhones.find(phone => phone && !phoneRegex.test(phone));
     if (invalidExtraPhone) {
       toast.error(isArabic ? "يرجى إدخال رقم هاتف مصري صحيح للأرقام الإضافية" : "Please enter valid Egyptian phone numbers for extra phones");
+      setIsSubmitting(false);
       return;
     }
 
@@ -587,6 +593,9 @@ const Cart = () => {
       });
       
       toast.error(isArabic ? "فشل الطلب" : "Order Failed");
+    } finally {
+      // Set submitting state back to false
+      setIsSubmitting(false);
     }
   };
 
@@ -1202,6 +1211,7 @@ const Cart = () => {
                   checked={paymentType === "cod"}
                   onChange={() => setPaymentType("cod")}
                   className="h-4 w-4 text-red-600"
+                  disabled={isSubmitting}
                 />
               </label>
               <label className={`flex items-center text-[14px] font-medium gap-2 justify-end ${isArabic ? "" : "flex-row-reverse"} `}>
@@ -1214,6 +1224,7 @@ const Cart = () => {
                   checked={paymentType === "online"}
                   onChange={() => setPaymentType("online")}
                   className="h-4 w-4 font-semibold text-red-600"
+                  disabled={isSubmitting}
                 />
               </label>
             </div>
@@ -1225,8 +1236,8 @@ const Cart = () => {
                     key={method.paymentId}
                     className={`p-3 border rounded cursor-pointer flex flex-col items-center ${
                       selectedOnlinePayment === method.paymentId.toString() ? "border-red-600 bg-red-50" : "border-gray-200"
-                    }`}
-                    onClick={() => setSelectedOnlinePayment(method.paymentId.toString())}
+                    } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={() => !isSubmitting && setSelectedOnlinePayment(method.paymentId.toString())}
                   >
                     <img src={method.logo} alt={method.name_en} className="h-10 object-contain mb-2" />
                     <span className="text-xs text-center">{isArabic ? method.name_ar : method.name_en}</span>
@@ -1237,16 +1248,24 @@ const Cart = () => {
            
             <button
               onClick={handleSubmitOrder}
-              disabled={!paymentType || (paymentType === "online" && !selectedOnlinePayment)}
-              className="w-full bg-red-600 text-white py-2 rounded text-sm font-bold hover:bg-red-700 disabled:bg-gray-400"
+              disabled={!paymentType || (paymentType === "online" && !selectedOnlinePayment) || isSubmitting}
+              className="w-full bg-red-600 text-white py-2 rounded text-sm font-bold hover:bg-red-700 disabled:bg-gray-400 relative"
             >
-              {isArabic ? "تأكيد الطلب" : " Place Order"}
+              {isSubmitting ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white mr-2"></div>
+                  {isArabic ? "جاري تقديم الطلب..." : "Submitting Order..."}
+                </div>
+              ) : (
+                isArabic ? "تأكيد الطلب" : "Place Order"
+              )}
             </button>
            
             <button
               type="button"
               onClick={() => setActiveStep(2)}
               className="w-full bg-gray-200 text-gray-800 py-2 rounded text-sm font-bold hover:bg-gray-300"
+              disabled={isSubmitting}
             >
               {isArabic ? "رجوع" : "Back"}
             </button>
