@@ -1,0 +1,56 @@
+.ordersContainer {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  
+  @media (max-width: 768px) {
+    .ordersContainer {
+      padding-top: 80px;
+      padding-bottom: 80px;
+    }
+  }
+  
+  /* Status timeline styling */
+  .statusTimeline {
+    position: relative;
+  }
+  
+  .statusTimeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #e5e7eb;
+    z-index: 1;
+  }
+  
+  .statusStep {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .statusIcon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+  }
+  
+  .statusIcon.active {
+    background-color: #d1fae5;
+  }
+  
+  .statusLabel {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+  
+  .statusLabel.active {
+    color: #059669;
+    font-weight: 500;
+  }

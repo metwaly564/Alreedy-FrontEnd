@@ -167,7 +167,7 @@ const OperationTeamDashboard = () => {
 
         // Fetch orders
         const ordersResponse = await fetch(
-          "https://reedyph.com/api/v1/orders?status=pending&status=ready&sort=date_asc&page=1&limit=100",
+          "https://reedyph.com/api/v1/orders?status=pending&status=ready&sort=date_asc&page=1&limit=100000",
           { headers }
         );
         if (!ordersResponse.ok) throw new Error('Failed to fetch orders');

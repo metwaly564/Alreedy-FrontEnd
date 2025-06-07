@@ -844,7 +844,13 @@ const Cart = () => {
     if (isPromoApplied && promoCodeDetails) {
       currentSubtotal = promoCodeDetails.originalCartTotal || subtotal;
       currentDiscount = promoCodeDetails.cartDiscount || 0;
-      currentTotal = promoCodeDetails.totalWithDeliveryAfterDiscount || (subtotal + deliveryFee);
+      
+      // Special condition: If discount equals subtotal, make total free
+      if (currentDiscount === currentSubtotal) {
+        currentTotal = 0;
+      } else {
+        currentTotal = promoCodeDetails.totalWithDeliveryAfterDiscount || (subtotal + deliveryFee);
+      }
     }
   
     return (
@@ -886,7 +892,13 @@ const Cart = () => {
         )}
   
         <div className={`flex justify-between border-t pt-2 font-medium ${isArabic ? "" : "flex-row-reverse"}`}>
-          <span className="text-left">{formatPrice(currentTotal)}</span>
+          <span className="text-left">
+            {currentTotal === 0 ? (
+              <span className="text-green-600">{isArabic ? "مجاني" : "Free"}</span>
+            ) : (
+              formatPrice(currentTotal)
+            )}
+          </span>
           <span className="text-right">{isArabic ? ": الإجمالي" : "Total :"}</span>
         </div>
       </div>

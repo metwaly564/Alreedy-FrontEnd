@@ -48,7 +48,7 @@ export default function StaticFooter() {
           <details className={`group cursor-pointer ${isArabic?"text-right":"text-left"} transition-all duration-300 `}>
             <summary className={`flex ${isArabic ? "" : "flex-row-reverse"} items-center justify-between font-medium text-right transition-all duration-300`}>
               <span className="text-lg transition-transform duration-300 group-open:rotate-45">+</span>
-              <Link to="/contactus" className="text-lg transition-all duration-300">{isArabic ? 'تواصل معنا' : 'Get In Touch'}</Link>
+              <span className="text-lg transition-all duration-300">{isArabic ? 'تواصل معنا' : 'Get In Touch'}</span>
             </summary>
             <div className={`mt-3 text-right flex flex-col hover:text-red-400 ${isArabic?"items-end":"items-start"} `}>
               <Link to="/branches" className="mb-2 hover:text-red-400 text-base font-light">{isArabic ? 'فروعنا' : 'Branches'}</Link>
@@ -138,7 +138,7 @@ export default function StaticFooter() {
             </summary>
             <div className={`mt-3 ${isArabic?"text-right":"text-left"}`}>
               <Link 
-                to="/track-order" 
+                to="/orders" 
                 className={`inline-block text-white px-2 py-2 rounded transition text-base font-light`}
                 style={{fontFamily: "'Alexandria', sans-serif"}}
               >
@@ -154,9 +154,9 @@ export default function StaticFooter() {
         {/* Get In Touch Section */}
         <div className={`flex-1 ${isArabic?"text-right":""} `}>
           <h3 className="text-lg font-bold mb-1 ">
-            <Link to="/contactus" className="inline-block border-b-2 border-blue-900 ">
+            <span to="/contactus" className="inline-block border-b-2 border-blue-900 ">
               {isArabic ? 'تواصل معنا' : 'Get In Touch'}
-            </Link>
+            </span>
           </h3>
           <Link to="/branches" className={`mb-2 ${isArabic?"text-right":""} hover:text-red-400  text-base font-light transition-all duration-300`}>{isArabic ? 'فروعنا' : 'Branches'}</Link>
           <div className={`flex ${isArabic?"text-right justify-end":"flex-row-reverse justify-end"}  items-center mb-2 text-base font-light`}>
@@ -250,7 +250,7 @@ export default function StaticFooter() {
             </span>
           </h3>
           <Link 
-            to="/track-order" 
+            to="/orders" 
             className="inline-block font-[300] hover:text-red-400 text-white px-4 py-2 rounded transition text-base"
           >
             {isArabic ? 'تتبع الآن' : 'Track Now'}
