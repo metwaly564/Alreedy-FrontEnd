@@ -17,10 +17,13 @@ export default function Register() {
   // Translation objects
   const translations = {
     title: isArabic ? "إنشاء حساب جديد" : "Create your account",
-    nameLabel: isArabic ? "الاسم الكامل" : "Full Name",
-    nameError: isArabic ? "الاسم مطلوب" : "Name is required",
+    firstNameLabel: isArabic ? "الاسم الأول" : "First Name",
+    lastNameLabel: isArabic ? "الاسم الأخير" : "Last Name",
+    firstNameError: isArabic ? "الاسم الأول مطلوب" : "First name is required",
+    lastNameError: isArabic ? "الاسم الأخير مطلوب" : "Last name is required",
     nameMin: isArabic ? "يجب أن يكون الاسم 3 أحرف على الأقل" : "Name must be at least 3 characters",
     nameMax: isArabic ? "يجب أن يكون الاسم 20 حرفًا كحد أقصى" : "Name must be at most 20 characters",
+    nameLettersOnly: isArabic ? "يجب أن يحتوي الاسم على أحرف فقط" : "Name must contain only letters",
     emailLabel: isArabic ? "البريد الإلكتروني" : "Email Address",
     emailError: isArabic ? "البريد الإلكتروني مطلوب" : "Email is required",
     emailInvalid: isArabic ? "بريد إلكتروني غير صالح" : "Invalid email address",
@@ -47,7 +50,7 @@ export default function Register() {
       const response = await axios.post(
         "https://reedyph.com/api/v1/auth/signup",
         {
-          name: values.name,
+          name: `${values.firstName} ${values.lastName}`,
           email: values.email,
           phone: values.phone,
           password: values.password
@@ -77,10 +80,16 @@ export default function Register() {
   }
 
   let myvalidation = Yup.object().shape({
-    name: Yup.string()
+    firstName: Yup.string()
       .min(3, translations.nameMin)
       .max(20, translations.nameMax)
-      .required(translations.nameError),
+      .matches(/^[A-Za-z\u0600-\u06FF\s]+$/, translations.nameLettersOnly)
+      .required(translations.firstNameError),
+    lastName: Yup.string()
+      .min(3, translations.nameMin)
+      .max(20, translations.nameMax)
+      .matches(/^[A-Za-z\u0600-\u06FF\s]+$/, translations.nameLettersOnly)
+      .required(translations.lastNameError),
     email: Yup.string()
       .email(translations.emailInvalid)
       .required(translations.emailError),
@@ -97,7 +106,8 @@ export default function Register() {
 
   let formik = useFormik({
     initialValues: {
-      name: "", 
+      firstName: "",
+      lastName: "",
       email: "",
       phone: "",
       password: "",
@@ -125,23 +135,43 @@ export default function Register() {
 
         <form onSubmit={formik.handleSubmit} className="mt-8 space-y-6">
           <div className="space-y-5">
-            {/* Name Field */}
+            {/* First Name Field */}
             <div>
-              <label htmlFor="name" className={`block text-sm font-medium ${isArabic ? "text-right" : "text-left"} text-gray-700`}>
-                {translations.nameLabel}
+              <label htmlFor="firstName" className={`block text-sm font-medium ${isArabic ? "text-right" : "text-left"} text-gray-700`}>
+                {translations.firstNameLabel}
               </label>
               <input
-                id="name"
-                name="name"
+                id="firstName"
+                name="firstName"
                 type="text"
-                value={formik.values.name}
+                value={formik.values.firstName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 ${isArabic ? "text-right" : "text-left"}`}
                 required
               />
-              {formik.errors.name && formik.touched.name && (
-                <p className={`mt-1 text-sm text-red-600 ${isArabic ? "text-right" : "text-left"}`}>{formik.errors.name}</p>
+              {formik.errors.firstName && formik.touched.firstName && (
+                <p className={`mt-1 text-sm text-red-600 ${isArabic ? "text-right" : "text-left"}`}>{formik.errors.firstName}</p>
+              )}
+            </div>
+
+            {/* Last Name Field */}
+            <div>
+              <label htmlFor="lastName" className={`block text-sm font-medium ${isArabic ? "text-right" : "text-left"} text-gray-700`}>
+                {translations.lastNameLabel}
+              </label>
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                value={formik.values.lastName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className={`mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 ${isArabic ? "text-right" : "text-left"}`}
+                required
+              />
+              {formik.errors.lastName && formik.touched.lastName && (
+                <p className={`mt-1 text-sm text-red-600 ${isArabic ? "text-right" : "text-left"}`}>{formik.errors.lastName}</p>
               )}
             </div>
 
