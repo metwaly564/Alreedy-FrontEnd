@@ -40,7 +40,6 @@ const Cart = () => {
   const [selectedOnlinePayment, setSelectedOnlinePayment] = useState(null);
   const [paymentType, setPaymentType] = useState("");
   const [originalDeliveryFee, setOriginalDeliveryFee] = useState(0);
-  const [extraPhones, setExtraPhones] = useState(["", ""]);
   
   const [checkoutForm, setCheckoutForm] = useState({
     firstname: "",
@@ -508,15 +507,6 @@ const Cart = () => {
   };
 
   // Checkout actions
-  const handleExtraPhoneChange = (index, value) => {
-    // Allow typing any number, but limit to 11 digits
-    if (value === '' || /^[0-9]{0,11}$/.test(value)) {
-      const newExtraPhones = [...extraPhones];
-      newExtraPhones[index] = value;
-      setExtraPhones(newExtraPhones);
-    }
-  };
-
   const handleMainPhoneChange = (value) => {
     // Allow typing any number, but limit to 11 digits
     if (value === '' || /^[0-9]{0,11}$/.test(value)) {
@@ -538,14 +528,6 @@ const Cart = () => {
       return;
     }
 
-    // Validate extra phones if any
-    const invalidExtraPhone = extraPhones.find(phone => phone && !phoneRegex.test(phone));
-    if (invalidExtraPhone) {
-      toast.error(isArabic ? "يرجى إدخال رقم هاتف مصري صحيح للأرقام الإضافية" : "Please enter valid Egyptian phone numbers for extra phones");
-      setIsSubmitting(false);
-      return;
-    }
-
     // Prepare order data
     const orderData = {
       cityId: parseInt(selectedCity),
@@ -555,8 +537,7 @@ const Cart = () => {
       promocode: isPromoApplied ? promoCode : null,
       paymentMethod: paymentType === "online" ? "online" : "cod",
       firstname: checkoutForm.firstname,
-      lastname: checkoutForm.lastname,
-      extraPhones: extraPhones.filter(phone => phone.trim() !== "")
+      lastname: checkoutForm.lastname
     };
   
     console.log("Order Request Body that will be sent:", JSON.stringify(orderData, null, 2));
@@ -956,11 +937,7 @@ const Cart = () => {
     if (!checkoutForm.phone || checkoutForm.phone.length < 11) {
       return false;
     }
-    if (!isPhoneValid(checkoutForm.phone)) {
-      return false;
-    }
-    // Check extra phones if they have any value
-    return extraPhones.every(phone => !phone || (phone.length === 11 && isPhoneValid(phone)));
+    return isPhoneValid(checkoutForm.phone);
   };
 
   const renderStepContent = () => {
@@ -1116,25 +1093,6 @@ const Cart = () => {
                 </p>
               )}
             </div>
-           
-            {extraPhones.map((phone, index) => (
-              <div key={index}>
-                <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
-                  {isArabic ? `هاتف إضافي ${index + 1}` : `Extra Phone ${index + 1}`}
-                </label>
-                <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => handleExtraPhoneChange(index, e.target.value)}
-                  className={`w-full border ${phone && phone.length === 11 && !/^01[0125][0-9]{8}$/.test(phone) ? 'border-red-500' : 'border-gray-300'} rounded px-3 py-2 text-sm font-alexandria font-light ${isArabic ? "text-right" : "text-left"}`}
-                />
-                {phone && phone.length === 11 && !/^01[0125][0-9]{8}$/.test(phone) && (
-                  <p className={`text-red-500 text-xs mt-1 ${isArabic ? "text-right" : "text-left"}`}>
-                    {isArabic ? "يرجى إدخال رقم هاتف مصري صحيح" : "Please enter a valid Egyptian phone number"}
-                  </p>
-                )}
-              </div>
-            ))}
 
             <div>
               <label className={`block font-semibold text-xs text-gray-600 mb-1 ${isArabic ? "text-right" : "text-left"}`}>
@@ -1201,32 +1159,44 @@ const Cart = () => {
             </h2>
            
             <div className="flex flex-col gap-4 mb-4">
-              <label className={`flex items-center text-[14px] font-medium gap-2 justify-end ${isArabic ? "" : "flex-row-reverse"} `}>
-               <span>
-                 {isArabic ? "الدفع عند الاستلام" : "Cash on Delivery"}
-                </span>
-                <input
-                  type="radio"
-                  name="paymentType"
-                  checked={paymentType === "cod"}
-                  onChange={() => setPaymentType("cod")}
-                  className="h-4 w-4 text-red-600"
-                  disabled={isSubmitting}
-                />
-              </label>
-              <label className={`flex items-center text-[14px] font-medium gap-2 justify-end ${isArabic ? "" : "flex-row-reverse"} `}>
+              <div
+                onClick={() => {
+                  if (!isSubmitting) {
+                    setPaymentType("cod");
+                  }
+                }}
+                className={`flex items-center text-[14px] font-medium gap-2 justify-end ${isArabic ? "" : "flex-row-reverse"} cursor-pointer select-none`}
+              >
                 <span>
-                {isArabic ? "الدفع الالكتروني" : "Online Payment "}
+                  {isArabic ? "الدفع عند الاستلام" : "Cash on Delivery"}
                 </span>
-                <input
-                  type="radio"
-                  name="paymentType"
-                  checked={paymentType === "online"}
-                  onChange={() => setPaymentType("online")}
-                  className="h-4 w-4 font-semibold text-red-600"
-                  disabled={isSubmitting}
-                />
-              </label>
+                <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                  paymentType === "cod" ? "border-red-600" : "border-gray-300"
+                }`}>
+                  {paymentType === "cod" && (
+                    <div className="h-2 w-2 rounded-full bg-red-600"></div>
+                  )}
+                </div>
+              </div>
+              <div
+                onClick={() => {
+                  if (!isSubmitting) {
+                    setPaymentType("online");
+                  }
+                }}
+                className={`flex items-center text-[14px] font-medium gap-2 justify-end ${isArabic ? "" : "flex-row-reverse"} cursor-pointer select-none`}
+              >
+                <span>
+                  {isArabic ? "الدفع الالكتروني" : "Online Payment "}
+                </span>
+                <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                  paymentType === "online" ? "border-red-600" : "border-gray-300"
+                }`}>
+                  {paymentType === "online" && (
+                    <div className="h-2 w-2 rounded-full bg-red-600"></div>
+                  )}
+                </div>
+              </div>
             </div>
            
             {paymentType === "online" && (
@@ -1234,11 +1204,22 @@ const Cart = () => {
                 {paymentMethods.map((method) => (
                   <div
                     key={method.paymentId}
+                    onClick={() => {
+                      if (!isSubmitting) {
+                        setSelectedOnlinePayment(method.paymentId.toString());
+                      }
+                    }}
                     className={`p-3 border rounded cursor-pointer flex flex-col items-center ${
                       selectedOnlinePayment === method.paymentId.toString() ? "border-red-600 bg-red-50" : "border-gray-200"
-                    } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
-                    onClick={() => !isSubmitting && setSelectedOnlinePayment(method.paymentId.toString())}
+                    } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''} select-none`}
                   >
+                    <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center mb-2 ${
+                      selectedOnlinePayment === method.paymentId.toString() ? "border-red-600" : "border-gray-300"
+                    }`}>
+                      {selectedOnlinePayment === method.paymentId.toString() && (
+                        <div className="h-2 w-2 rounded-full bg-red-600"></div>
+                      )}
+                    </div>
                     <img src={method.logo} alt={method.name_en} className="h-10 object-contain mb-2" />
                     <span className="text-xs text-center">{isArabic ? method.name_ar : method.name_en}</span>
                   </div>

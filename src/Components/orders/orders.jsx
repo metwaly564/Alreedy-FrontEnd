@@ -28,6 +28,7 @@ export default function Orders() {
 
   const getApiToken = async () => {
     try {
+      //to Get Api Token
       const response = await axios.post('https://admin.reedyph.com/api/token', {
         username: "api",
         password: "1213646522"
@@ -58,7 +59,7 @@ export default function Orders() {
           'Access-Token': userToken,
         },
       };
-
+      // to get User phone number
       const response = await axios.get('https://reedyph.com/api/v1/users/user', config);
       setPhoneNumber(response.data.phone);
       fetchOrders(response.data.phone);
@@ -81,17 +82,20 @@ export default function Orders() {
         }
       });
       setOrders(response.data);
+
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error(isArabic ? 'حدث خطأ في جلب بيانات الطلبات' : 'Error fetching orders data');
+
     } finally {
       setLoading(false);
     }
   };
 
   const isActiveStatus = (currentOrderStatus, targetStatus) => {
-    const statusOrder = ['pending', 'received', 'prepared', 'dispatched', 'delivered'];
-    const currentIndex = statusOrder.indexOf(currentOrderStatus);
+    const statusOrder = ['pending', 'received', 'prepared', 'dispatched', 'collected', 'delivered'];
+    let effectiveStatus = currentOrderStatus === 'dispatched' ? 'collected' : currentOrderStatus;
+    const currentIndex = statusOrder.indexOf(effectiveStatus);
     const targetIndex = statusOrder.indexOf(targetStatus);
     return currentIndex >= targetIndex;
   };
@@ -122,12 +126,12 @@ export default function Orders() {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => {
-              const progressScale = 
-                order.status === 'pending' ? 0 : 
-                order.status === 'received' ? 0.25 : 
-                order.status === 'prepared' ? 0.5 : 
-                order.status === 'dispatched' ? 0.75 : 
-                1;
+              const progressScale =
+                order.status === 'pending' ? 0 :
+                  order.status === 'received' ? 0.25 :
+                    order.status === 'prepared' ? 0.5 :
+                      order.status === 'dispatched' || order.status === 'collected' ? 0.75 :
+                        1;
 
               return (
                 <div key={order.id} className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -143,7 +147,11 @@ export default function Orders() {
                         {isArabic ? 'المجموع:' : 'Total:'} {order.total_amount} {isArabic ? 'جنية' : 'EGP'}
                       </span>
                       <span className="text-sm font-medium">
-                        {isArabic ? 'طريقة الدفع:' : 'Payment:'} {order.payment_method === 'card' ? (isArabic ? 'بطاقة' : 'Card') : (isArabic ? 'نقدي' : 'Cash')}
+                        {isArabic ? 'طريقة الدفع:' : 'Payment:'}
+                        {order.payment_method === 'card' ? (isArabic ? 'بطاقة' : 'Card') :
+                          order.payment_method === 'online' ? (isArabic ? 'اونلاين' : 'Online') :
+                            order.payment_method === 'wallet' ? (isArabic ? 'محفظة' : 'Wallet') :
+                              (isArabic ? 'نقدي' : 'Cash')}
                       </span>
                     </div>
                   </div>
@@ -177,7 +185,7 @@ export default function Orders() {
                                 {item.quantity}
                               </td>
                               <td className={`py-2 ${isArabic ? 'text-right' : 'text-left'} flex-3 flex-row-reverse`}>
-                                <span className="text-sm font-medium"> 
+                                <span className="text-sm font-medium">
                                   <span className='text-[1px]'>ـ</span>
                                   {isArabic ? ` ${item.total_price} جنية` : `${item.total_price} EGP`}
                                 </span>
@@ -192,8 +200,8 @@ export default function Orders() {
                   <div className="p-4 bg-gray-50">
                     <div className="relative">
                       <div className="absolute top-4 left-0 right-0 h-1 bg-gray-200" style={{ zIndex: 0 }}>
-                        <div 
-                          className="h-full bg-green-500 transition-all duration-500" 
+                        <div
+                          className="h-full bg-green-500 transition-all duration-500"
                           style={{
                             transform: `scaleX(${progressScale})`,
                             transformOrigin: isArabic ? 'right' : 'left',
@@ -221,10 +229,10 @@ export default function Orders() {
                         </div>
 
                         <div className={`flex flex-col items-center ${isArabic ? 'text-right' : 'text-left'}`}>
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isActiveStatus(order.status, 'dispatched') ? 'bg-green-100' : 'bg-gray-100'}`}>
-                            <FaTruck className={`${isActiveStatus(order.status, 'dispatched') ? 'text-green-500' : 'text-gray-400'}`} />
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isActiveStatus(order.status, 'collected') ? 'bg-green-100' : 'bg-gray-100'}`}>
+                            <FaTruck className={`${isActiveStatus(order.status, 'collected') ? 'text-green-500' : 'text-gray-400'}`} />
                           </div>
-                          <span className={`text-xs mt-1 ${isActiveStatus(order.status, 'dispatched') ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
+                          <span className={`text-xs mt-1 ${isActiveStatus(order.status, 'collected') ? 'text-green-600 font-medium' : 'text-gray-500'}`}>
                             {isArabic ? 'مع المندوب' : 'With Delivery'}
                           </span>
                         </div>
@@ -256,10 +264,10 @@ export default function Orders() {
                           {isArabic ? ': مصدر الطلب' : 'Order Source:'}
                         </h4>
                         <p className="text-sm text-gray-600">
-                          {order.order_source === 'Phone' ? (isArabic ? 'هاتف' : 'Phone') : 
-                           order.order_source === 'Whatsapp' ? (isArabic ? 'واتساب' : 'Whatsapp') : 
-                           order.order_source === 'Instagram' ? (isArabic ? 'انستجرام' : 'Instagram') : 
-                           order.order_source}
+                          {order.order_source === 'Phone' ? (isArabic ? 'هاتف' : 'Phone') :
+                            order.order_source === 'Whatsapp' ? (isArabic ? 'واتساب' : 'Whatsapp') :
+                              order.order_source === 'Instagram' ? (isArabic ? 'انستجرام' : 'Instagram') :
+                                order.order_source}
                         </p>
                       </div>
                     </div>
