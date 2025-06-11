@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { ArrowLeft, Heart } from "lucide-react";
 import { CartContext } from "../../Context/CartContexrt";
 import { UserContext } from "../../Context/UserContext";
+import { transform } from "@babel/core";
 
 export default function ProductDetails() {
   const { skuId } = useParams();
@@ -257,9 +258,10 @@ export default function ProductDetails() {
   // Arabic version
   if (isArabic) {
     return (
-      <div className="mx-auto mt-20 md:mt-6 px-4 py-8 max-w-4xl rtl bg-white rounded-lg" dir="rtl">
+      <div className="mx-auto mt-20 md:mt-6 px-4 py-8 max-w-4xl rtl bg-white rounded-lg" dir={isArabic ? "rtl" : "ltr"}
+  >
         <Link to="/" className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 mt-10 font-alexandria font-light">
-          <ArrowLeft className="ml-2 h-4 w-4" />
+          <ArrowLeft className={`ml-2 h-4 w-4 ${isArabic && "transform rotate-180"}`} />
           العودة إلى الصفحة الرئيسية
         </Link>
 

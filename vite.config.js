@@ -14,4 +14,9 @@ export default defineConfig({
     host: 'localhost', // or '127.0.0.1'
     port: 5173,       // Try this or another port
   },
+  define: {
+    'process.env': {},
+    'process.platform': JSON.stringify(process.platform),
+    'process.version': JSON.stringify(process.version),
+  },
 });

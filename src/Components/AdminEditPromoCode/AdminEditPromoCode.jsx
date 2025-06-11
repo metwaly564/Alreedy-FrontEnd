@@ -21,22 +21,45 @@ export default function AdminEditPromoCode() {
   const [loadingCities, setLoadingCities] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(false);
   const [csvFile, setCsvFile] = useState(null);
+  const [pagination, setPagination] = useState({
+    totalCount: 0,
+    totalPages: 1,
+    currentPage: 1,
+    limit: 10
+  });
 
   const TestToken = localStorage.getItem('userToken');
   const ITEMS_PER_PAGE = 10;
 
   // Fetch all data
+  const fetchPromoCodes = async (page = 1) => {
+    try {
+      setLoading(true);
+      const promoCodesRes = await fetch(`https://reedyph.com/api/v1/promocodes?page=${page}`, {
+        headers: { 'Access-Token': TestToken }
+      });
+      const promoCodesData = await promoCodesRes.json();
+      
+      setPromoCodes(promoCodesData.promoCodes || []);
+      setPagination({
+        totalCount: promoCodesData.pagination?.totalCount || 0,
+        totalPages: promoCodesData.pagination?.totalPages || 1,
+        currentPage: promoCodesData.pagination?.currentPage || 1,
+        limit: promoCodesData.pagination?.limit || 10
+      });
+    } catch (error) {
+      setError(error.message);
+      toast.error(`Error loading promo codes: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-
-        // Fetch promoCodes
-        const promoCodesRes = await fetch('https://reedyph.com/api/v1/promocodes', {
-          headers: { 'Access-Token': TestToken }
-        });
-        const promoCodesData = await promoCodesRes.json();
-        setPromoCodes(promoCodesData.promoCodes || []);
+        // Fetch initial promoCodes
+        await fetchPromoCodes(1);
 
         // Fetch cities
         const citiesRes = await fetch('https://reedyph.com/api/v1/places/city', {
@@ -92,7 +115,7 @@ export default function AdminEditPromoCode() {
   );
 
   // Pagination
-  const pageCount = Math.ceil(sortedAndFilteredPromoCodes.length / ITEMS_PER_PAGE);
+  const pageCount = pagination.totalPages;
   const offset = currentPage * ITEMS_PER_PAGE;
   const currentPromoCodes = sortedAndFilteredPromoCodes.slice(offset, offset + ITEMS_PER_PAGE);
 
@@ -105,7 +128,10 @@ export default function AdminEditPromoCode() {
     });
   };
 
-  const handlePageClick = ({ selected }) => setCurrentPage(selected);
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+    fetchPromoCodes(selected + 1); // API pages are 1-based
+  };
 
   const handleDelete = async (id) => {
     try {
@@ -438,7 +464,7 @@ export default function AdminEditPromoCode() {
       </div>
 
       {/* Pagination */}
-      {sortedAndFilteredPromoCodes.length > ITEMS_PER_PAGE && (
+      {pagination.totalCount > ITEMS_PER_PAGE && (
         <div className="flex justify-center mt-4">
           <ReactPaginate
             previousLabel={'Previous'}

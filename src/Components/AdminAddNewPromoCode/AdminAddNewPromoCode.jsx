@@ -251,7 +251,7 @@ const CreatePromoCode = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center p-4">
+    <div className="flex flex-col justify-center p-4 mt-16">
       <ToastContainer position="top-right" autoClose={5000} />
       
       {/* Basic Information Form */}

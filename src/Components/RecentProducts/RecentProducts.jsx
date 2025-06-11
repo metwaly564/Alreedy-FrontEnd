@@ -978,8 +978,8 @@ export default function RecentProducts() {
                                     {/* Product info */}
                                     <div
                                       className="p-1 pb-6 sm:p-2 sm:pb-8 relative overflow-y-hidden text-right"
-                                      dir="rtl"
-                                    >
+                                      dir={isArabic ? "rtl" : "ltr"}
+                                      >
                                       <h3 className={`alexandria-500 text-[13px] sm:text-[16px] mb-0.5 sm:mb-1 line-clamp-1 ${isArabic ? "text-right" : "text-left"}`}>
                                         {isArabic ? product.nameAr : product.nameEn}
                                       </h3>

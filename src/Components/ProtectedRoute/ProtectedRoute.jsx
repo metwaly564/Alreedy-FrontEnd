@@ -42,6 +42,17 @@ export default function ProtectedRoute({ children, allowedRules = [] }) {
   }
 }
 
+
+
+// {This part does not affect the code's logic in the final version of the website,
+//  but it is a very useful tool for developers.
+//  It tells React: "Listen,
+//  the ProtectedRoute component must take a prop called children,
+//  and it must take another prop called allowedRoles which must be an array of strings."
+//  If any developer uses this component incorrectly
+//  (for example, they forget to pass the children),
+//  React will show them a warning in the console,
+//  and this helps to avoid errors.}
 ProtectedRoute.propTypes = {
   children: PropTypes.node.isRequired,
   allowedRules: PropTypes.arrayOf(PropTypes.string)
