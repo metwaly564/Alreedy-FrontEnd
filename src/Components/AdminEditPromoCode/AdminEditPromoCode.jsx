@@ -32,7 +32,7 @@ export default function AdminEditPromoCode() {
   const ITEMS_PER_PAGE = 10;
 
   // Fetch all data
-  const fetchPromoCodes = async (page = 1) => {
+  const fetchPromoCodes = async (page = 1, search = '', sort = { key: 'id', direction: 'ascending' }) => {
     try {
       setLoading(true);
       const promoCodesRes = await fetch(`https://reedyph.com/api/v1/promocodes?page=${page}`, {
@@ -116,8 +116,7 @@ export default function AdminEditPromoCode() {
 
   // Pagination
   const pageCount = pagination.totalPages;
-  const offset = currentPage * ITEMS_PER_PAGE;
-  const currentPromoCodes = sortedAndFilteredPromoCodes.slice(offset, offset + ITEMS_PER_PAGE);
+ 
 
   const requestSort = (key) => {
     setSortConfig({
@@ -419,8 +418,8 @@ export default function AdminEditPromoCode() {
             </tr>
           </thead>
           <tbody>
-            {currentPromoCodes.length > 0 ? (
-              currentPromoCodes.map((promoCode) => (
+          {sortedAndFilteredPromoCodes.length > 0 ? (
+    sortedAndFilteredPromoCodes.map((promoCode) => (
                 <tr key={promoCode.id} className="border-t">
                   <td className="p-3">{promoCode.id}</td>
                   <td className="p-3 font-mono">{promoCode.code}</td>
