@@ -28,7 +28,7 @@ export default function AdminEditPromoCode() {
     limit: 10
   });
 
-  const TestToken = localStorage.getItem('userToken');
+  const userToken = localStorage.getItem('userToken');
   const ITEMS_PER_PAGE = 10;
 
   // Fetch all data
@@ -36,7 +36,7 @@ export default function AdminEditPromoCode() {
     try {
       setLoading(true);
       const promoCodesRes = await fetch(`https://reedyph.com/api/v1/promocodes?page=${page}`, {
-        headers: { 'Access-Token': TestToken }
+        headers: { 'Access-Token': userToken }
       });
       const promoCodesData = await promoCodesRes.json();
       
@@ -63,14 +63,14 @@ export default function AdminEditPromoCode() {
 
         // Fetch cities
         const citiesRes = await fetch('https://reedyph.com/api/v1/places/city', {
-          headers: { 'Access-Token': TestToken }
+          headers: { 'Access-Token': userToken }
         });
         const citiesData = await citiesRes.json();
         setCities(Array.isArray(citiesData) ? citiesData : []);
 
         // Fetch categories
         const categoriesRes = await fetch('https://reedyph.com/api/v1/categories', {
-          headers: { 'Access-Token': TestToken }
+          headers: { 'Access-Token': userToken }
         });
         const categoriesData = await categoriesRes.json();
         setCategories(Array.isArray(categoriesData) ? categoriesData : categoriesData.categories || []);
@@ -78,7 +78,7 @@ export default function AdminEditPromoCode() {
         // Fetch users
         setLoadingUsers(true);
         const usersRes = await fetch('https://reedyph.com/api/v1/users', {
-          headers: { 'Access-Token': TestToken }
+          headers: { 'Access-Token': userToken }
         });
         const usersData = await usersRes.json();
         const customerUsers = Array.isArray(usersData)
@@ -97,7 +97,7 @@ export default function AdminEditPromoCode() {
     };
 
     fetchData();
-  }, [TestToken]);
+  }, [userToken]);
 
   // Sort and filter promoCodes
   const sortedAndFilteredPromoCodes = [...promoCodes].sort((a, b) => {
@@ -138,7 +138,7 @@ export default function AdminEditPromoCode() {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Token': TestToken
+          'Access-Token': userToken
         },
         body: JSON.stringify({ id })
       });
@@ -156,7 +156,7 @@ export default function AdminEditPromoCode() {
   const fetchPromoCodeDetails = async (id) => {
     try {
       const response = await fetch(`https://reedyph.com/api/v1/promocodes/promocode/${id}`, {
-        headers: { 'Access-Token': TestToken }
+        headers: { 'Access-Token': userToken }
       });
       if (!response.ok) throw new Error('Failed to fetch details');
       return (await response.json()).promoCode;
@@ -233,7 +233,7 @@ export default function AdminEditPromoCode() {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Token': TestToken
+          'Access-Token': userToken
         },
         body: JSON.stringify(dataToSend)
       });
