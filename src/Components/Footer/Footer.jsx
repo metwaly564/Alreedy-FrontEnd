@@ -5,6 +5,7 @@ import {
   FaHeart,
   FaUserAlt,
   FaHome,
+  FaClipboardList,
 } from "react-icons/fa";
 import { NavLink } from "react-router-dom";
 import { CartContext } from "../../Context/CartContexrt";
@@ -85,6 +86,21 @@ const {isArabic} = useContext(UserContext)
                      </span>
         </NavLink>
        
+        <NavLink to="/orders" className={`flex flex-col items-center ${isUserLoggedIn ? 'mt-[-1px]' : 'mt-[19px]'}`}>
+          <FaClipboardList
+            className={`text-lg transition-colors duration-200 ${
+              location.pathname === "/orders" ? "text-[rgb(170,15,18)]" : "text-gray-600"
+            }`}
+          />
+          <span
+            className={`text-xs transition-colors duration-200 ${
+              location.pathname === "/orders" ? "text-[rgb(170,15,18)]" : "text-gray-600"
+            }`}
+          >
+            {isArabic ? "الطلبات" : "Orders"}
+          </span>
+        </NavLink>
+        
         <NavLink to="/Account" className={`flex flex-col items-center ${!isUserLoggedIn ? 'mt-[19px]' : ''}`}>
           <FaUserAlt
             className={`text-lg transition-colors duration-200 ${
