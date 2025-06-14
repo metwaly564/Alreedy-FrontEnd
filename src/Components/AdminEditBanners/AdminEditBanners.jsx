@@ -46,7 +46,7 @@ export default function AdminEditBanners() {
       }
     };
     fetchBanners();
-  }, [banners]);
+  }, []);
 
   /**
    * Validates banner form data
