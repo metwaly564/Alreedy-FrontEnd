@@ -19,6 +19,7 @@ import {
   FiMenu,
   FiChevronDown
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 
 export default function Navbar() {
   const {
@@ -68,6 +69,7 @@ export default function Navbar() {
     userlogin,
     setuserlogin,
     triggerRefresh,
+    isOrdersLoading,
   } = useContext(UserContext);
   let { numItems } = useContext(CartContext);
   const [inputValue, setInputValue] = useState("");
@@ -149,6 +151,10 @@ export default function Navbar() {
   // Auth action handler
   function handleAuthAction() {
     if (isLoggedIn) {
+      if (isOrdersLoading) {
+        toast.error(isArabic ? 'يرجى الانتظار، الطلبات قيد التحميل...' : 'Please wait, orders are loading...');
+        return;
+      }
       localStorage.removeItem("userToken");
       setuserlogin(null);
       setIsLoggedIn(false);

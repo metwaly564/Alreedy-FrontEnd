@@ -14,6 +14,7 @@ export default function UserContextProvider(props) {
   const [TempSkuID, setTempSkuID] = useState();
   const [TempTagData, setTempTagData] = useState();
   const [TempCatData, setTempCatData] = useState(null);
+  const [isOrdersLoading, setIsOrdersLoading] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [isArabic, setisArabic] = useState(() => {
     const stored = localStorage.getItem("isArabic");
@@ -105,7 +106,8 @@ export default function UserContextProvider(props) {
       triggerRefresh,
       refreshTrigger, setRefreshTrigger,
       isArabic, setisArabic,
-      refreshAccessToken
+      refreshAccessToken,
+      isOrdersLoading, setIsOrdersLoading
     }}>
       {props.children}
     </UserContext.Provider>

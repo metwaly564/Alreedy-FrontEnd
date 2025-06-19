@@ -12,7 +12,7 @@ export default function Orders() {
   const [loading, setLoading] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [apiToken, setApiToken] = useState(null);
-
+  const { setIsOrdersLoading } = useContext(UserContext);
   useEffect(() => {
     const initialize = async () => {
       await getApiToken();
@@ -46,6 +46,7 @@ export default function Orders() {
   };
 
   const fetchUserData = async () => {
+    setIsOrdersLoading(true);
     try {
       const userToken = localStorage.getItem('userToken');
       if (!userToken) {
@@ -66,6 +67,8 @@ export default function Orders() {
     } catch (error) {
       console.error('Error fetching user data:', error);
       setLoading(false);
+    } finally {
+      setIsOrdersLoading(false);
     }
   };
 
