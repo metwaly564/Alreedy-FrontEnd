@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { CartContext } from "../../Context/CartContexrt";
 import { UserContext } from "../../Context/UserContext";
 import { CounterContext } from "../../Context/CounterContext";
@@ -49,9 +48,13 @@ const TagDetails = () => {
         const response = await axios.get(`https://reedyph.com/api/v1/tags/tag/${id}`);
 
         setTag(response.data);
-        const productsWithImages = response.data.products.map(product => ({
+        // Filter out inactive products before mapping and setting the state
+        const activeProducts = response.data.products.filter(
+          (p) => p.product.isActive
+        );
+        const productsWithImages = activeProducts.map((product) => ({
           ...product.product,
-          Images: product.product.Images || []
+          Images: product.product.Images || [],
         }));
         setProducts(productsWithImages);
       } catch (error) {
@@ -169,6 +172,15 @@ const TagDetails = () => {
   const handleCloseQuickView = () => {
     setIsQuickViewOpen(false);
     setSelectedProduct(null);
+  };
+
+  const handleProductClick = async (skuId, navigateTo) => {
+    try {
+      await axios.get(`https://reedyph.com/api/v1/products/product-addview/${skuId}`);
+    } catch (error) {
+      console.error("Error tracking product view:", error);
+    }
+    window.location.href = navigateTo;
   };
 
   const handleTouchStart = (e, isMin) => {
@@ -618,7 +630,7 @@ const TagDetails = () => {
                           to={`/Productdetails/${product.skuId}`}
                           onClick={(e) => {
                             e.preventDefault();
-                            handleQuickViewClick(product);
+                            handleProductClick(product.skuId, `/Productdetails/${product.skuId}`);
                           }}
                           className="block overflow-hidden"
                         >
