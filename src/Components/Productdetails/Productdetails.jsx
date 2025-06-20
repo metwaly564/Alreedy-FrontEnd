@@ -304,7 +304,7 @@ export default function ProductDetails() {
             <p className="text-gray-600 font-alexandria font-light">من {product.company}</p>
             
             <div className="flex items-center space-x-reverse space-x-4">
-              <span className="text-3xl font-bold text-gray-900 whitespace-nowrap">{product.priceAfter} جنيه</span>
+              <span className="text-3xl font-bold text-gray-900 whitespace-nowrap overflow-hidden">{product.priceAfter} جنيه</span>
               {product.priceBefore && product.priceBefore !== product.priceAfter && (
                 <>
                   <span className="text-xl text-gray-500 line-through ml-4 font-alexandria font-light whitespace-nowrap">{product.priceBefore} جنيه</span>
