@@ -86,7 +86,7 @@ const {isArabic} = useContext(UserContext)
                      </span>
         </NavLink>
        
-        <NavLink to="/" className={`flex flex-col items-center ${isUserLoggedIn ? 'mt-[-1px]' : 'mt-[19px]'}`}>
+        <NavLink to="/orders" className={`flex flex-col items-center ${isUserLoggedIn ? 'mt-[-1px]' : 'mt-[19px]'}`}>
           <FaClipboardList
             className={`text-lg transition-colors duration-200 ${
               location.pathname === "/orders" ? "text-[rgb(170,15,18)]" : "text-gray-600"

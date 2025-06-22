@@ -250,7 +250,7 @@ export default function StaticFooter() {
             </span>
           </h3>
           <Link 
-            to="/" 
+            to="/orders" 
             className="inline-block font-[300] hover:text-red-400 text-white px-4 py-2 rounded transition text-base"
           >
             {isArabic ? 'تتبع الآن' : 'Track Now'}
