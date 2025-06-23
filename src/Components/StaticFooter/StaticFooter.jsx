@@ -138,7 +138,7 @@ export default function StaticFooter() {
             </summary>
             <div className={`mt-3 ${isArabic?"text-right":"text-left"}`}>
               <Link 
-                to="/" 
+                to="/orders" 
                 className={`inline-block text-white px-2 py-2 rounded transition text-base font-light`}
                 style={{fontFamily: "'Alexandria', sans-serif"}}
               >
