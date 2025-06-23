@@ -33,6 +33,8 @@ export default function Orders() {
   const validateToken = () => {
     const userToken = localStorage.getItem('userToken');
     if (!userToken) {
+      toast.error(isArabic ? 'يجب عليك تسجيل الدخول' : 'You should sign in.');
+      navigate('/login');
       return false;
     }
     const decodedToken = decodeJWT(userToken);
@@ -43,7 +45,7 @@ export default function Orders() {
     }
     if (!decodedToken.phone) {
       localStorage.removeItem('userToken');
-      toast.error('Invalid session. Please login again.');
+      toast.error(isArabic ? 'جلسة غير صالحة. الرجاء تسجيل الدخول مرة أخرى.' : 'Invalid session. Please login again.');
       navigate('/login');
       return false;
     }
@@ -65,7 +67,6 @@ export default function Orders() {
       const userToken = localStorage.getItem('userToken');
       
       if (!userToken) {
-        toast.error(isArabic ? 'الرجاء تسجيل الدخول لعرض الطلبات' : 'Please login to view orders');
         setLoading(false);
         setIsOrdersLoading(false);
         return;
