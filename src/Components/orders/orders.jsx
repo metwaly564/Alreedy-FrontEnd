@@ -5,60 +5,52 @@ import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
 import style from './Orders.module.css';
 import { FaCheckCircle, FaBox, FaTruck, FaHome } from 'react-icons/fa';
-
-// Function to decode JWT token
-const decodeJWT = (token) => {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    return JSON.parse(jsonPayload);
-  } catch (error) {
-    console.error('Error decoding JWT token:', error);
-    return null;
-  }
-};
-
-// Function to validate token and check for phone number
-const validateToken = () => {
-  const userToken = localStorage.getItem('userToken');
-  
-  if (!userToken) {
-    return false;
-  }
-
-  const decodedToken = decodeJWT(userToken);
-  
-  if (!decodedToken) {
-    console.log('Invalid token format, removing token');
-    localStorage.removeItem('userToken');
-    window.location.reload();
-    return false;
-  }
-
-  // Check if token contains phone number
-  if (!decodedToken.phone) {
-    console.log('Token does not contain phone number, removing token');
-    localStorage.removeItem('userToken');
-    toast.error('Invalid session. Please login again.');
-    window.location.reload();
-    return false;
-  }
-
-  console.log('Token is valid and contains phone number:', decodedToken.phone);
-  return true;
-};
+import { useNavigate } from 'react-router-dom';
 
 export default function Orders() {
   const { isArabic } = useContext(UserContext);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setIsOrdersLoading } = useContext(UserContext);
+  const navigate = useNavigate();
+
+  // Function to decode JWT token
+  const decodeJWT = (token) => {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decoding JWT token:', error);
+      return null;
+    }
+  };
+
+  // Function to validate token and check for phone number
+  const validateToken = () => {
+    const userToken = localStorage.getItem('userToken');
+    if (!userToken) {
+      return false;
+    }
+    const decodedToken = decodeJWT(userToken);
+    if (!decodedToken) {
+      localStorage.removeItem('userToken');
+      navigate('/login');
+      return false;
+    }
+    if (!decodedToken.phone) {
+      localStorage.removeItem('userToken');
+      toast.error('Invalid session. Please login again.');
+      navigate('/login');
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
-    // Validate token before fetching orders
     if (!validateToken()) {
       return;
     }
