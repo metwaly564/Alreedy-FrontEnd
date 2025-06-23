@@ -19,7 +19,7 @@ export default function Login() {
     title: isArabic ? "تسجيل الدخول إلى حسابك" : "Sign in to your account",
     phoneLabel: isArabic ? "رقم الهاتف" : "Phone Number",
     phoneError: isArabic ? "رقم الهاتف مطلوب" : "Phone number is required",
-    phoneInvalid: isArabic ? "أدخل رقم هاتف مصري صالح" : "Enter a valid Egyptian phone number",
+    phoneInvalid: isArabic ? " الرقم غير صالح" : "Enter a valid Egyptian phone number",
     passwordLabel: isArabic ? "كلمة المرور" : "Password",
     passwordError: isArabic ? "كلمة المرور مطلوبة" : "Password is required",
     passwordLength: isArabic ? "يجب أن تكون كلمة المرور 6 أحرف على الأقل" : "Password must be at least 6 characters",
