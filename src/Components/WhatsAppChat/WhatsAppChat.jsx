@@ -78,10 +78,10 @@ export default function WhatsAppChat() {
         <>
             <button
                 onClick={handleWhatsAppClick}
-                className="fixed bottom-[12%] lg:bottom-[5vh] right-4 bg-red-600 hover:bg-red-600 text-white w-12 h-12 rounded-full shadow-lg transition-all duration-300 z-50 flex items-center justify-center"
+                className="fixed bottom-[12%] lg:bottom-[5vh] right-4 bg-red-600 hover:bg-red-600 text-white w-12 h-12 rounded-full shadow-lg transition-all duration-300 z-50 flex items-center justify-center overflow-hidden"
                 aria-label="Chat with us"
             >
-                <i className="fas fa-comments text-xl"></i>
+                <i className="fas fa-comments text-xl overflow-hidden"></i>
             </button>
             <button
                 onClick={handleScrollToTop}
@@ -89,10 +89,10 @@ export default function WhatsAppChat() {
                     opacity: scrollOpacity,
                     transition: 'opacity 0.4s',
                 }}
-                className="fixed bottom-[12%] lg:bottom-[5vh] left-4 bg-red-600 hover:bg-red-600 text-white w-12 h-12 rounded-full shadow-lg z-50 flex items-center justify-center"
+                className="fixed bottom-[12%] lg:bottom-[5vh] left-4 bg-red-600 hover:bg-red-600 text-white w-12 h-12 rounded-full shadow-lg z-50 flex items-center justify-center overflow-hidden"
                 aria-label="Scroll to top"
             >
-                <FaArrowUp className="text-xl" />
+                <FaArrowUp className="text-xl overflow-hidden" />
             </button>
         </>
     ) : null;
