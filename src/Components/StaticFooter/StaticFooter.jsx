@@ -264,10 +264,10 @@ export default function StaticFooter() {
                 <a href="https://wa.me/201201200016" target="_blank" rel="noopener noreferrer" className="hover:text-red-400 transition"><FaWhatsapp size={25} /></a>
               </div>
       {/* Copyright Section */}
-      <div className="mt-6 pt-4 mb-20 sm:-mb-2  text-center text-sm text-gray-400 font-light hover:text-red-100 transition-all duration-300">
+      <div className="mt-6 pt-4 mb-20 sm:-mb-2 text-center text-sm text-gray-400 font-light hover:text-red-100 transition-all duration-300">
         <p className=' text-[12px] lg:text-base'>&copy; {new Date().getFullYear()} {isArabic ? 'جميع الحقوق محفوظة لصيدليات الريدي' : 'All rights Reserved for Elreedy Pharmacies'}</p>
+      <div className='text-center text-[12px] text-gray-400 font-light mt-4 -mb-1'> Devloped by <a className='hover:text-red-400 transition' target='_blank' href='https://www.linkedin.com/in/mohamed-metwaly-abdelaziz/'>{`<Mohamed/>`}</a> <a className='hover:text-red-400 transition'  target='_blank' href='https://www.linkedin.com/in/yousef-hannora/' >{`<Youssef/>`}</a> </div>
       </div>
-      {/* <div className='text-center text-sm text-gray-400 font-light mb-14 mt-2 sm:mb-2 sm:mt-7'> Devloped by <a className='hover:text-red-400 transition' target='_blank' href='https://www.linkedin.com/in/mohamed-metwaly-abdelaziz/'>{`<Mohamed/>`}</a> <a className='hover:text-red-400 transition'  target='_blank' href='https://www.linkedin.com/in/yousef-hannora/' >{`<Youssef/>`}</a> </div> */}
     </footer>
     </>
   );
