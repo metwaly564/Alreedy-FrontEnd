@@ -14,6 +14,7 @@ export default function AdminEditBanners() {
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [isCreating, setIsCreating] = useState(false);
 
   // Form state
   const [newBannerData, setNewBannerData] = useState({
@@ -63,8 +64,11 @@ export default function AdminEditBanners() {
     }
     if (data.rank && isNaN(data.rank)) {
       errors.rank = 'Rank must be a number';
-      return errors;
     }
+    if (!data.image) {
+      errors.image = 'Image is required';
+    }
+    return errors;
   };
 
   /**
@@ -84,12 +88,19 @@ export default function AdminEditBanners() {
    * Creates a new banner
    */
   const createBanner = async () => {
-    const errors = validateForm(newBannerData);
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
+    if (!userToken) {
+      toast.error('Authentication required. Please log in again.');
       return;
     }
 
+    const errors = validateForm(newBannerData);
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      toast.error('Please fix the form errors before submitting');
+      return;
+    }
+
+    setIsCreating(true);
     const formData = new FormData();
     formData.append('image', newBannerData.image);
     formData.append('type', newBannerData.type);
@@ -97,26 +108,48 @@ export default function AdminEditBanners() {
     if (newBannerData.rank) formData.append('rank', newBannerData.rank);
 
     try {
+      console.log('Creating banner with data:', {
+        type: newBannerData.type,
+        linkUrl: newBannerData.linkUrl,
+        rank: newBannerData.rank,
+        image: newBannerData.image?.name
+      });
+
       const response = await fetch('https://reedyph.com/api/v1/banners/banner', {
         method: 'POST',
         headers: { 'Access-Token': userToken },
         body: formData
       });
 
-      if (!response.ok) throw new Error('Failed to create banner');
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Error response:', errorData);
+        throw new Error(errorData.message || `HTTP ${response.status}: Failed to create banner`);
+      }
+
+      const result = await response.json();
+      console.log('Success response:', result);
 
       // Refresh banners list
       const refreshResponse = await fetch('https://reedyph.com/api/v1/banners/banner');
-      const updatedBanners = await refreshResponse.json();
-      setBanners(updatedBanners);
+      if (refreshResponse.ok) {
+        const updatedBanners = await refreshResponse.json();
+        setBanners(updatedBanners);
+      }
 
       // Reset form
       setNewBannerData({ type: 'slider', linkUrl: '', rank: '', image: null });
       setFormErrors({});
-      document.getElementById('banner-image-input').value = '';
+      const fileInput = document.getElementById('banner-image-input');
+      if (fileInput) fileInput.value = '';
       toast.success('Banner created successfully');
     } catch (err) {
+      console.error('Error creating banner:', err);
       toast.error(`Error creating banner: ${err.message}`);
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -297,19 +330,22 @@ export default function AdminEditBanners() {
 
           {/* Image Upload and Submit */}
           <div className="flex gap-2">
-            <input
-              id="banner-image-input"
-              type="file"
-              className="flex-grow p-2 border rounded w-2"
-              onChange={(e) => setNewBannerData({ ...newBannerData, image: e.target.files[0] })}
-              accept="image/*"
-            />
+            <div className="flex-grow">
+              <input
+                id="banner-image-input"
+                type="file"
+                className={`w-full p-2 border rounded ${formErrors.image ? 'border-red-500' : ''}`}
+                onChange={(e) => setNewBannerData({ ...newBannerData, image: e.target.files[0] })}
+                accept="image/*"
+              />
+              {formErrors.image && <p className="text-red-500 text-xs mt-1">{formErrors.image}</p>}
+            </div>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded whitespace-nowrap"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={createBanner}
-              disabled={!newBannerData.image || !newBannerData.type || !newBannerData.linkUrl}
+              disabled={!newBannerData.image || !newBannerData.type || !newBannerData.linkUrl || isCreating}
             >
-              Add Banner
+              {isCreating ? 'Creating...' : 'Add Banner'}
             </button>
           </div>
         </div>
