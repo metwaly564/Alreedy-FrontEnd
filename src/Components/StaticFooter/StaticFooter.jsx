@@ -266,7 +266,7 @@ export default function StaticFooter() {
       {/* Copyright Section */}
       <div className="mt-6 pt-4 mb-20 sm:-mb-2 text-center text-sm text-gray-400 font-light hover:text-red-100 transition-all duration-300">
         <p className=' text-[12px] lg:text-base'>&copy; {new Date().getFullYear()} {isArabic ? 'جميع الحقوق محفوظة لصيدليات الريدي' : 'All rights Reserved for Elreedy Pharmacies'}</p>
-      <div className='text-center text-[12px] text-gray-400 font-light mt-4 -mb-1'> Devloped by <a className='hover:text-red-400 transition' target='_blank' href='https://www.linkedin.com/in/mohamed-metwaly-abdelaziz/'>{`<Mohamed/>`}</a> <a className='hover:text-red-400 transition'  target='_blank' href='https://www.linkedin.com/in/yousef-hannora/' >{`<Youssef/>`}</a> </div>
+      {/* <div className='text-center text-[12px] text-gray-400 font-light mt-4 -mb-1'> Devloped by <a className='hover:text-red-400 transition' target='_blank' href='https://www.linkedin.com/in/mohamed-metwaly-abdelaziz/'>{`<Mohamed/>`}</a> <a className='hover:text-red-400 transition'  target='_blank' href='https://www.linkedin.com/in/yousef-hannora/' >{`<Youssef/>`}</a> </div> */}
       </div>
     </footer>
     </>
