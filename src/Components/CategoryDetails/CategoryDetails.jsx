@@ -425,29 +425,31 @@ export default function CategoryDetails() {
                     }`}
                   style={{ minWidth: '100%' }}
                 >
-                  <button
-                    onClick={() => {
-                      resetTagFilter();
-                      setShowTagDropdown(false);
-                    }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${!selectedTag ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
-                  >
-                    {isArabic ? 'جميع العلامات' : 'All Tags'}
-                  </button>
-                  {tags.map((tag) => (
+                  <div className="max-h-80 overflow-y-auto">
                     <button
-                      key={tag.id}
                       onClick={() => {
-                        setSelectedTag(tag);
+                        resetTagFilter();
                         setShowTagDropdown(false);
                       }}
-                      className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${selectedTag?.id === tag.id ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                      className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${!selectedTag ? "bg-red-500 text-white" : "hover:bg-gray-50"
                         }`}
                     >
-                      {isArabic ? tag.nameAr : tag.nameEn}
+                      {isArabic ? 'جميع العلامات' : 'All Tags'}
                     </button>
-                  ))}
+                    {tags.map((tag) => (
+                      <button
+                        key={tag.id}
+                        onClick={() => {
+                          setSelectedTag(tag);
+                          setShowTagDropdown(false);
+                        }}
+                        className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${selectedTag?.id === tag.id ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                          }`}
+                      >
+                        {isArabic ? tag.nameAr : tag.nameEn}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 

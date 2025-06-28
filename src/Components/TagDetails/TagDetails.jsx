@@ -316,29 +316,31 @@ const TagDetails = () => {
                     }`}
                   style={{ minWidth: '100%' }}
                 >
-                  <button
-                    onClick={() => {
-                      resetCategoryFilter();
-                      setShowCategoryDropdown(false);
-                    }}
-                    className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${!selectedCategory ? "bg-red-500 text-white" : "hover:bg-gray-50"
-                      }`}
-                  >
-                    {isArabic ? 'جميع التصنيفات' : 'All Categories'}
-                  </button>
-                  {categories.map((category) => (
+                  <div className="max-h-80 overflow-y-auto">
                     <button
-                      key={category.id}
                       onClick={() => {
-                        setSelectedCategory(category);
+                        resetCategoryFilter();
                         setShowCategoryDropdown(false);
                       }}
-                      className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${selectedCategory?.id === category.id ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                      className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${!selectedCategory ? "bg-red-500 text-white" : "hover:bg-gray-50"
                         }`}
                     >
-                      {isArabic ? category.nameAr : category.nameEn}
+                      {isArabic ? 'جميع التصنيفات' : 'All Categories'}
                     </button>
-                  ))}
+                    {categories.map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setShowCategoryDropdown(false);
+                        }}
+                        className={`block ${isArabic ? 'text-right' : 'text-left'} w-full text-left px-4 py-2 rounded transition-colors duration-150 font-medium ${selectedCategory?.id === category.id ? "bg-red-500 text-white" : "hover:bg-gray-50"
+                          }`}
+                      >
+                        {isArabic ? category.nameAr : category.nameEn}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 

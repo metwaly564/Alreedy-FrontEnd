@@ -510,15 +510,17 @@ export default function Search() {
                   className={`bg-white border rounded shadow mt-1 transition-all duration-500 ease-in-out overflow-hidden ${showCategoryDropdown ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'}`}
                   style={{ minWidth: '100%' }}
                 >
-                  {categories.map(category => (
-                    <button
-                      key={category.id}
-                      className={`block w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-2 hover:bg-gray-50 transition-colors duration-150 font-medium`}
-                      onClick={() => handleCategoryFilter(category.id)}
-                    >
-                      {isArabic ? category.nameAr : category.nameEn}
-                    </button>
-                  ))}
+                  <div className="max-h-80 overflow-y-auto">
+                    {categories.map(category => (
+                      <button
+                        key={category.id}
+                        className={`block w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-2 hover:bg-gray-50 transition-colors duration-150 font-medium`}
+                        onClick={() => handleCategoryFilter(category.id)}
+                      >
+                        {isArabic ? category.nameAr : category.nameEn}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -537,15 +539,17 @@ export default function Search() {
                   className={`bg-white border rounded shadow mt-1 transition-all duration-500 ease-in-out overflow-hidden ${showTagDropdown ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'}`}
                   style={{ minWidth: '100%' }}
                 >
-                  {tags.map(tag => (
-                    <button
-                      key={tag.id}
-                      className={`block w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-2 hover:bg-gray-50 transition-colors duration-150 font-medium`}
-                      onClick={() => handleTagFilter(tag.id)}
-                    >
-                      {isArabic ? tag.nameAr : tag.nameEn}
-                    </button>
-                  ))}
+                  <div className="max-h-80 overflow-y-auto">
+                    {tags.map(tag => (
+                      <button
+                        key={tag.id}
+                        className={`block w-full ${isArabic ? 'text-right' : 'text-left'} px-4 py-2 hover:bg-gray-50 transition-colors duration-150 font-medium`}
+                        onClick={() => handleTagFilter(tag.id)}
+                      >
+                        {isArabic ? tag.nameAr : tag.nameEn}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
