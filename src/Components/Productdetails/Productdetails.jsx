@@ -368,7 +368,7 @@ export default function ProductDetails() {
               <div className="flex flex-wrap gap-2">
                 {product.tags?.map((tag) => (
                   <Link to={`/TagDetails/${tag.tagId}`} key={tag.tagId} className="overflow-hidden">
-                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light">
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light overflow-hidden">
                       {tag.tag.nameEn} {/* Assuming tags only have English names */}
                     </span>
                   </Link>
