@@ -377,8 +377,8 @@ export default function ProductDetails() {
             </div>
 
             <div className="border-t border-gray-200 pt-4">
-              <h3 className="font-semibold text-gray-900 mb-2">{isArabic ? "التصنيفات" : "Categories"}</h3>
-              <div className="flex flex-wrap gap-2">
+              <h3 className="font-semibold text-gray-900 mb-2 overflow-hidden">{isArabic ? "التصنيفات" : "Categories"}</h3>
+              <div className="flex flex-wrap gap-2 overflow-hidden">
                 {product.productCategories?.map((categoryObj) => {
                   const cat = categoryObj.category || {};
                   const name = isArabic ? (cat.nameAr || cat.nameEn || "") : (cat.nameEn || cat.nameAr || "");
@@ -386,9 +386,9 @@ export default function ProductDetails() {
                     <Link 
                       to={`/CategoryDetails/${categoryObj.categoryId}`}
                       key={categoryObj.categoryId}
-                      className="hover:text-red-500 transition duration-300 font-light"
+                      className="hover:text-red-500 transition duration-300 font-light overflow-hidden"
                     >
-                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light">
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light overflow-hidden">
                         {name}
                       </span>
                     </Link>
