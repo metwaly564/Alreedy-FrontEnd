@@ -68,12 +68,22 @@ const OperationTeamDashboard = () => {
     );
 
     if (searchTerm) {
-      sortableOrders = sortableOrders.filter(order =>
-        order.id.toString().includes(searchTerm) ||
-        (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (order.mainPhone && order.mainPhone.includes(searchTerm)) ||
-        (order.status && order.status.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+      sortableOrders = sortableOrders.filter(order => {
+        // Check order ID, customer name, phone, and status
+        const basicMatch = 
+          order.id.toString().includes(searchTerm) ||
+          (order.customerName && order.customerName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (order.mainPhone && order.mainPhone.includes(searchTerm)) ||
+          (order.status && order.status.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        // Check order items
+        const itemsMatch = order.orderItems?.some(item => {
+          const productName = productsMap[item.productId] || item.productId;
+          return productName.toLowerCase().includes(searchTerm.toLowerCase());
+        }) || false;
+        
+        return basicMatch || itemsMatch;
+      });
     }
 
     if (sortConfig.key) {
@@ -92,7 +102,7 @@ const OperationTeamDashboard = () => {
     }
 
     return sortableOrders;
-  }, [orders, sortConfig, searchTerm]);
+  }, [orders, sortConfig, searchTerm, productsMap]);
 
   // Pagination logic
   const pageCount = Math.ceil(sortedAndFilteredOrders.length / ITEMS_PER_PAGE);
