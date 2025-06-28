@@ -257,6 +257,23 @@ export default function CategoryDetails() {
     document.addEventListener('touchend', handleTouchEnd);
   };
 
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (sortDropdownRef.current && !sortDropdownRef.current.contains(event.target)) {
+        setShowSort(false);
+      }
+      if (tagDropdownRef.current && !tagDropdownRef.current.contains(event.target)) {
+        setShowTagDropdown(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <div className="mx-auto px-0.5 sm:px-4 relative mt-[14vh] mb-[12vh] bg-gray-100" style={{ fontFamily: "'Alexandria', sans-serif" }}>
@@ -291,11 +308,12 @@ export default function CategoryDetails() {
 
         {/* Mobile Overlays */}
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden overflow-hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
           onClick={() => {
             setShowFilters(false);
             setShowSort(false);
           }}
+          style={{ touchAction: 'none' }}
         ></div>
 
         {/* Sort Sidebar - Mobile Only */}

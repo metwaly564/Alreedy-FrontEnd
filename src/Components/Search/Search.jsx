@@ -459,12 +459,13 @@ export default function Search() {
 
         {/* Mobile Overlays */}
         <div
-          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          className={`fixed inset-0 bg-black bg-opacity-50 z-[60] transition-opacity duration-300 md:hidden overflow-hidden ${(showFilters || showSort) ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
           onClick={() => {
             setShowFilters(false);
             setShowSort(false);
           }}
+          style={{ touchAction: 'none' }}
         ></div>
 
         <div className="flex flex-col md:flex-row">
