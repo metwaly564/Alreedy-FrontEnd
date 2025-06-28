@@ -223,7 +223,7 @@ export default function ProductDetails() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64 mt-12">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
       </div>
     );
@@ -388,7 +388,7 @@ export default function ProductDetails() {
                       key={categoryObj.categoryId}
                       className="hover:text-red-500 transition duration-300 font-light"
                     >
-                      <span className="alexandria-500 text-[14px] capitalize font-alexandria font-light">
+                      <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light">
                         {name}
                       </span>
                     </Link>
@@ -563,7 +563,7 @@ export default function ProductDetails() {
                     key={categoryObj.categoryId}
                     className="hover:text-red-500 transition duration-300 font-light"
                   >
-                    <span className="alexandria-500 text-[14px] capitalize font-alexandria font-light">
+                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light">
                       {name}
                     </span>
                   </Link>
