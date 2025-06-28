@@ -476,7 +476,7 @@ export default function ProductDetails() {
           <p className="text-gray-600 font-alexandria font-light">By {product.company}</p>
           
           <div className="flex items-center space-x-4">
-            <span className="text-3xl font-bold text-gray-900">{product.priceAfter} EGP</span>
+            <span className="text-3xl font-bold text-gray-900 overflow-hidden">{product.priceAfter} EGP</span>
             {product.priceBefore && product.priceBefore !== product.priceAfter && (
               <>
                 <span className="text-xl text-gray-500 line-through ml-4">{product.priceBefore} EGP</span>
@@ -539,11 +539,11 @@ export default function ProductDetails() {
           )}
 
           <div className="border-t border-gray-200 pt-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Tags</h3>
-            <div className="flex flex-wrap gap-2">
+            <h3 className="font-semibold text-gray-900 mb-2 overflow-hidden">Tags</h3>
+            <div className="flex flex-wrap gap-2 overflow-hidden">
               {product.tags?.map((tag) => (
-                <Link to={`/TagDetails/${tag.tagId}`} key={tag.tagId}>
-                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                <Link to={`/TagDetails/${tag.tagId}`} key={tag.tagId} className="overflow-hidden">
+                  <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded overflow-hidden">
                     {tag.tag.nameEn}
                   </span>
                 </Link>

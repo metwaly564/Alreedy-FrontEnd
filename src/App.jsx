@@ -72,6 +72,8 @@ import Offers from "./Components/Offers/Offers";
 import PendingPayment from "./Components/pending-payment/pending-payment";
 import Contactus from "./Components/contactus/contactus";
 import Orders from "./Components/orders/orders";
+import About from "./Components/About/About";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -109,6 +111,7 @@ const router = createBrowserRouter([
       { path: "Offers", element: <Offers /> },
       { path: "contactus", element: <Contactus /> },
       { path: "orders", element: <Orders /> },
+      { path: "about", element: <About /> },
       
       // Protected routes for all authenticated users (any rule including customers)
       {
