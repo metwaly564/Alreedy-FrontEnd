@@ -561,7 +561,7 @@ export default function ProductDetails() {
                   <Link 
                     to={`/CategoryDetails/${categoryObj.categoryId}`}
                     key={categoryObj.categoryId}
-                    className="hover:text-red-500 transition duration-300 font-light"
+                    className="hover:text-red-500 transition duration-300 font-light overflow-hidden"
                   >
                     <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded capitalize font-alexandria font-light overflow-hidden">
                       {name}
